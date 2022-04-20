@@ -102,8 +102,8 @@ export default {
 
         formattTime(start, end){
             const dateValue = moment(start).format('dddd D MMMM  YYYY');
-            const timeStart = moment(start).format('LT');
-            const timeEnd = moment(end).format('LT');
+            const timeStart = moment(start,'HHmm').format("HH:mm");
+            const timeEnd = moment(end, 'HHmm').format("HH:mm");
             return `${dateValue} ${timeStart} - ${timeEnd}`;
         }
     }
