@@ -1,17 +1,28 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Client;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Client::class, function (Faker $faker) {
-    return [
-        'name' => $faker->name,
-        'email' => $faker->email,
-        'phone' => $faker->phoneNumber,
-        'adress' => $faker->streetAddress,
-        'city' => $faker->city,
-        'postcode' => $faker->postcode,
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Client>
+ */
+class ClientFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->name,
+            'email' => $this->faker->freeEmail,
+            'phone' => $this->faker->numerify('+ #### ### ###'),
+            'address' => $this->faker->streetAddress,
+            'city' => $this->faker->city,
+            'postcode' => $this->faker->postcode,
+        ];
+    }
+}
