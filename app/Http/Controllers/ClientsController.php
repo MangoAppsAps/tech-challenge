@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Actions\FilterBooking;
-use App\Booking;
 use App\Client;
 use App\Http\Requests\FilterBookingRequest;
 use App\Http\Requests\StoreClientRequest;
-use Carbon\Carbon;
 
 class ClientsController extends Controller
 {
