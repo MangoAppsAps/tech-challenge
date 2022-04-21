@@ -1,5 +1,7 @@
 # EasyPractice Technical Challenge
 
+
+Just testing 
 Welcome to the EasyPractice tech challenge! Below you'll find a list of tasks to complete on this project. Make sure you're familiar with Git, Laravel and Vue.js before starting. This challenge should take no more than 3 hours.
 
 ## Working on the challenge
