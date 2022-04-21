@@ -27,8 +27,10 @@ Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function () {
     Route::post('/', 'ClientsController@store');
     Route::get('/{client}', 'ClientsController@show');
     Route::delete('/{client}', 'ClientsController@destroy');
+    Route::post('/bookings/filter','ClientsController@filterBookings');
 
-    Route::get('/{client}/journals', 'JournalsController@index');
-    Route::post('/{client}/journals', 'JournalsController@store');
-    Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
+    Route::get('{client}/create/journal', 'JournalController@create');
+    Route::post('/{client}/journal', 'JournalController@store');
+    Route::delete('journal/{journal}', 'JournalController@destroy');
+
 });

@@ -10,13 +10,14 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
+        'user_id'
     ];
 
     protected $appends = [
-        'url',
+        'url','bookings_count'
     ];
 
     public function bookings()
@@ -33,4 +34,19 @@ class Client extends Model
     {
         return "/clients/" . $this->id;
     }
+
+//local scope
+    public function scopeCurrentUser()
+    {
+        return $this->where('user_id', '=', Auth()->id());
+    }
+
+    public function journals()
+    {
+        return $this->hasMany(Journal::class,'client_id','id');
+    }
+
+
+
+
 }

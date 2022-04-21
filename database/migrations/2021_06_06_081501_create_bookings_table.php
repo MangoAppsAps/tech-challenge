@@ -20,7 +20,6 @@ class CreateBookingsTable extends Migration
             $table->dateTime('end');
             $table->text('notes');
             $table->timestamps();
-
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });
     }

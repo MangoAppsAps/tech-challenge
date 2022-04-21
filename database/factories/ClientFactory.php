@@ -10,8 +10,9 @@ $factory->define(Client::class, function (Faker $faker) {
         'name' => $faker->name,
         'email' => $faker->email,
         'phone' => $faker->phoneNumber,
-        'adress' => $faker->streetAddress,
+        'address' => $faker->streetAddress, //typo
         'city' => $faker->city,
         'postcode' => $faker->postcode,
+        'user_id'=>1
     ];
 });
