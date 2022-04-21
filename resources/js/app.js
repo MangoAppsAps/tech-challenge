@@ -18,7 +18,18 @@ window.Vue = require('vue');
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+import { ValidationProvider, ValidationObserver } from 'vee-validate';
 
+import { extend } from 'vee-validate';
+import * as rules from 'vee-validate/dist/rules';
+
+Object.keys(rules).forEach(rule => {
+  extend(rule, rules[rule]);
+});
+
+
+Vue.component('ValidationProvider', ValidationProvider);
+Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('clients-list', require('./components/ClientsList.vue').default);
 Vue.component('client-form', require('./components/ClientForm.vue').default);
