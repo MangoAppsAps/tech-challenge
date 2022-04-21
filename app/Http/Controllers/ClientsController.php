@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\FilterBooking;
 use App\Booking;
 use App\Client;
 use App\Http\Requests\FilterBookingRequest;
@@ -41,16 +42,8 @@ class ClientsController extends Controller
         return 'Deleted';
     }
 
-    public function filterBookings(FilterBookingRequest $request)
+    public function filterBookings(FilterBookingRequest $request,FilterBooking $filterBooking)
     {
-        $bookings = Booking::where('client_id', '=', $request['client_id'])->get();
-
-        if ($request['query'] == 'future') {
-            return $bookings->where('start', '>', Carbon::now());
-        } elseif ($request['query'] == 'past') {
-            return $bookings->where('start', '<', Carbon::now());
-        } else {
-            return $bookings;
-        }
+       return $filterBooking->execute($request);
     }
 }
