@@ -2102,6 +2102,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientShow',
@@ -2118,26 +2129,28 @@ __webpack_require__.r(__webpack_exports__);
     switchTab: function switchTab(newTab) {
       this.currentTab = newTab;
     },
-    deleteBooking: function deleteBooking(booking) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
+    deleteBooking: function deleteBooking(id, index) {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/" + id).then(function () {
+        _this.bookings.splice(index, 1);
+      });
     },
     filterBookings: function filterBookings() {
-      var _this = this;
+      var _this2 = this;
 
       var form = new FormData();
       form.append('query', this.selectedValue);
       form.append('client_id', this.client.id);
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients/bookings/filter', form).then(function (data) {
-        _this.bookings = data.data;
-      })["catch"](function () {
-        alert('error');
+        _this2.bookings = data.data;
       });
     },
     deleteJournal: function deleteJournal(id, index) {
-      var _this2 = this;
+      var _this3 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]('/clients/journal/' + id).then(function () {
-        _this2.journals.splice(index, 1);
+        _this3.journals.splice(index, 1);
       })["catch"](function () {
         alert('error cant delete');
       });
@@ -38176,7 +38189,7 @@ var render = function () {
                 },
               },
             },
-            [_vm._v("Bookings")]
+            [_vm._v("Bookings\n                ")]
           ),
           _vm._v(" "),
           _c(
@@ -38193,7 +38206,7 @@ var render = function () {
                 },
               },
             },
-            [_vm._v("Journals")]
+            [_vm._v("Journals\n                ")]
           ),
         ]),
         _vm._v(" "),
@@ -38260,7 +38273,7 @@ var render = function () {
                         _vm._v(" "),
                         _c(
                           "tbody",
-                          _vm._l(_vm.bookings, function (booking) {
+                          _vm._l(_vm.bookings, function (booking, index) {
                             return _c("tr", { key: booking.id }, [
                               _c("td", { staticStyle: { width: "350px" } }, [
                                 _vm._v(_vm._s(booking.time)),
@@ -38275,11 +38288,18 @@ var render = function () {
                                     staticClass: "btn btn-danger btn-sm",
                                     on: {
                                       click: function ($event) {
-                                        return _vm.deleteBooking(booking)
+                                        return _vm.deleteBooking(
+                                          booking.id,
+                                          index
+                                        )
                                       },
                                     },
                                   },
-                                  [_vm._v("Delete")]
+                                  [
+                                    _vm._v(
+                                      "\n                                    Delete\n                                "
+                                    ),
+                                  ]
                                 ),
                               ]),
                             ])
@@ -38341,7 +38361,7 @@ var render = function () {
                               },
                             },
                           },
-                          [_vm._v("Delete")]
+                          [_vm._v("Delete\n                            ")]
                         ),
                       ]),
                     ])

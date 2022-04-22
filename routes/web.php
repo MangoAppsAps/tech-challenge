@@ -23,6 +23,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('clients', 'ClientsController')->except(['edit', 'update']);
+    Route::delete('bookings/{booking}','BookingController@destroy');
 
     Route::group(['prefix' => 'clients'], function () {
         Route::post('/bookings/filter', 'ClientsController@filterBookings');
@@ -30,5 +31,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('{client}/create/journal', 'JournalController@create');
         Route::post('/{client}/journal', 'JournalController@store');
         Route::delete('journal/{journal}', 'JournalController@destroy');
+
     });
+
 });

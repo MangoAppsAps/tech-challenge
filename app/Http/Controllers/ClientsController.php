@@ -44,6 +44,6 @@ class ClientsController extends Controller
 
     public function filterBookings(FilterBookingRequest $request, FilterBooking $filterBooking)
     {
-        return $filterBooking->execute($request);
+        return $filterBooking->execute($request)->values();
     }
 }
