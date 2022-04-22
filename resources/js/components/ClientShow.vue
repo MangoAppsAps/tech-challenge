@@ -72,7 +72,7 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">
                         List of client journals
-                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">
+                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addJournal">
                         New Journal
                         </button>
                     </h3>
@@ -86,11 +86,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in bookings" :key="booking.id">
-                                    <td>{{ formattTime(booking.start,booking.end) }}</td>
-                                    <td>{{ booking.notes }}</td>
-                                    <td>
-                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
+                                <tr v-for="journal in journals" :key="journal.id">
+                                    <td>{{ journalDate(journal.date) }}</td>
+                                    <td>{{ journal.notes }}</td>
+                                    <td class="float-right" style="display:flex; justify-content: space-between;">
+                                        <button type="button" class="btn btn-success btn-sm"  data-toggle="modal" data-target="#viewJournal" @click="viewJournal(journal)">View</button>
+                                        <button type="button" class="btn btn-danger btn-sm" @click="deleteJournal(journal.id)">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -103,7 +104,7 @@
                 </div>
 
                 <!---Add Journal-->
-                <div class="modal" id="myModal">
+                <div class="modal" id="addJournal">
                     <div class="modal-dialog">
                         <div class="modal-content">
 
@@ -137,6 +138,33 @@
                         </div>
                     </div>
                 </div>
+
+                <!---View Journal-->
+                <div class="modal" id="viewJournal">
+                    <div class="modal-dialog" v-if="journal">
+                        <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div class='col-sm-6'>
+                                <div>
+                                    <p><strong>Date</strong></p>
+                                    <p>{{ journalDate(journal.date) }}</p>
+                                </div>
+                                <div>
+                                    <p><strong>Notes</strong></p>
+                                    <p>{{ journal.notes }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -157,6 +185,8 @@ export default {
             filter:"All bookings",
             date: '',
             notes: '',
+            journal: {},
+            journals: [],
         }
     },
 
@@ -170,17 +200,36 @@ export default {
             }
             return this.client.bookings
         }
+        // journals(){
+        //     return this.APIjournals
+        // }
+    },
+
+
+    async created(){
+        const response = await axios.get(`/clients/${this.client.id}/journals`)
+        this.journals = response.data.journals
     },
 
     methods: {
-        addJournal() {
-            // const payload = {
-            //     date: this.date,
-            //     notes: this.notes,
-            //     client: this.client.id
-            // }
-            // axios.post(`/clients/journals`, payload);
+        viewJournal(journal){
+            this.journal = journal
         },
+        async addJournal() {
+            const payload = {
+                date: this.date,
+                notes: this.notes,
+                client: this.client.id
+            }
+            await axios.post(`/clients/${this.client.id}/journals`, payload);
+            const response = await axios.get(`/clients/${this.client.id}/journals`)
+            this.journals = response.data.journals
+        },
+        async deleteJournal(journalID) {
+            console.log(journalID);
+            axios.delete(`/clients/journals/${journalID}`);
+            const response = await axios.get(`/clients/${this.client.id}/journals`)
+            this.journals = response.data.journals        },
         switchTab(newTab) {
             this.currentTab = newTab;
         },
@@ -194,7 +243,12 @@ export default {
             const timeStart = moment(start,'HHmm').format("HH:mm");
             const timeEnd = moment(end, 'HHmm').format("HH:mm");
             return `${dateValue} ${timeStart} - ${timeEnd}`;
+        },
+
+        journalDate(rawDate){
+            return moment(rawDate).format("L")
         }
     }
 }
 </script>
+
