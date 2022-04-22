@@ -3,16 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Actions\FilterBooking;
-use App\Client;
 use App\Http\Requests\FilterBookingRequest;
 use App\Http\Requests\StoreClientRequest;
+use App\Models\Client;
+use App\Services\ClientService;
 
 class ClientsController extends Controller
 {
+    private $clientService;
+
+    public function __construct(ClientService $clientService)
+    {
+        $this->clientService = $clientService;
+    }
+
     public function index()
     {
-        $clients = Client::CurrentUser()->latest()->get();
-        return view('clients.index', ['clients' => $clients]);
+        return $this->clientService->index();
     }
 
     public function create()
@@ -22,26 +29,21 @@ class ClientsController extends Controller
 
     public function show(Client $client)
     {
-        $client->load('bookings','journals');
-
-        return view('clients.show', ['client' => $client]);
+        return $this->clientService->show($client);
     }
 
     public function store(StoreClientRequest $request)
     {
-        $request->merge(['user_id' => auth()->id()]);
-        $client = Client::create($request->all());
-        return $client;
+        return $this->clientService->store($request);
     }
 
     public function destroy(Client $client)
     {
-        $client->delete();
-        return 'Deleted';
+        return $this->clientService->destroy($client);
     }
 
-    public function filterBookings(FilterBookingRequest $request,FilterBooking $filterBooking)
+    public function filterBookings(FilterBookingRequest $request, FilterBooking $filterBooking)
     {
-       return $filterBooking->execute($request);
+        return $filterBooking->execute($request);
     }
 }

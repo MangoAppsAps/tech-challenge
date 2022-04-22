@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Client;
 use App\Http\Requests\StoreJournalRequest;
-use App\Journal;
+use App\Models\Client;
+use App\Models\Journal;
+use App\Services\JournalService;
 
 class JournalController extends Controller
 {
+
+    private $journalService;
+
+    public function __construct(JournalService $journalService)
+    {
+        $this->journalService = $journalService;
+    }
 
     public function create($id)
     {
@@ -16,15 +24,11 @@ class JournalController extends Controller
 
     public function store(StoreJournalRequest $request, Client $client)
     {
-        $request->merge(['user_id' => Auth()->id()]);
-        $client->journals()->create($request->all());
-
-        return "created successfully";
+        return $this->journalService->store($request, $client);
     }
 
     public function destroy(Journal $journal)
     {
-        $journal->delete();
-        return 'deleted successfully';
+        return $this->journalService->destroy($journal);
     }
 }

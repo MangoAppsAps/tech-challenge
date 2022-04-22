@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Booking;
+use App\Models\Booking;
 use Carbon\Carbon;
 
 class FilterBooking
