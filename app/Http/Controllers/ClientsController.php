@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $user = Auth::user();
 
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
+        $clients = $user->clients;
 
         return view('clients.index', ['clients' => $clients]);
     }
@@ -25,13 +24,16 @@ class ClientsController extends Controller
 
     public function show($client)
     {
-        $client = Client::where('id', $client)->first();
+        $client = Client::where('id', $client)->with(['bookings' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])->first();
 
         return view('clients.show', ['client' => $client]);
     }
 
     public function store(Request $request)
     {
+        $user = Auth::user();
         $client = new Client;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
@@ -39,14 +41,15 @@ class ClientsController extends Controller
         $client->adress = $request->get('adress');
         $client->city = $request->get('city');
         $client->postcode = $request->get('postcode');
+        $client->created_by = $user->id;
         $client->save();
 
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
+        $client->delete();
 
         return 'Deleted';
     }

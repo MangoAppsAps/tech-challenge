@@ -25,6 +25,8 @@
     },
     "dependencies": {
         "mix-tailwindcss": "^1.3.0",
-        "tailwindcss": "^2.1.4"
+        "moment": "^2.29.3",
+        "tailwindcss": "^2.1.4",
+        "vee-validate": "^3.4.14"
     }
 }
