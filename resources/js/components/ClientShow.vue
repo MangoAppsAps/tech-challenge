@@ -38,7 +38,8 @@
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
-
+                    <v-select :options="options"  v-model="filter" class="mb-3"></v-select>
+                    
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
@@ -49,7 +50,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in bookings" :key="booking.id">
                                     <td>{{ formattTime(booking.start,booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,6 +89,20 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            options: ["All bookings", "Future bookings only" ,"Past bookings only"],
+            filter:"All bookings",
+        }
+    },
+
+    computed: {
+        bookings(){
+            const now = moment()
+            if(this.filter === 'Future bookings only'){
+                return this.client.bookings.filter(booking => moment(booking.end).isAfter(now));
+            }else if (this.filter === 'Past bookings only'){
+                return this.client.bookings.filter(booking => moment(booking.end).isBefore(now));
+            }
+            return this.client.bookings
         }
     },
 
