@@ -38,8 +38,9 @@
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
+
                     <v-select :options="options"  v-model="filter" class="mb-3"></v-select>
-                    
+
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
@@ -69,9 +70,72 @@
 
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
-                    <h3 class="mb-3">List of client journals</h3>
+                    <h3 class="mb-3">
+                        List of client journals
+                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">
+                        New Journal
+                        </button>
+                    </h3>
+                    <template v-if="client.bookings && client.bookings.length > 0">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="booking in bookings" :key="booking.id">
+                                    <td>{{ formattTime(booking.start,booking.end) }}</td>
+                                    <td>{{ booking.notes }}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </template>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <template v-else>
+                        <p class="text-center">The client has no bookings.</p>
+                    </template>
+                </div>
+
+                <!---Add Journal-->
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title">New Journal</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div class='col-sm-6'>
+                                <div class="form-group">
+                                    <label for="date">Date</label>
+                                    <input type='date' v-model="date" class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="notes">Notes</label>
+                                    <textarea class="form-control" v-model="notes" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-success" @click="addJournal" data-dismiss="modal">Add</button>
+                        </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,6 +155,8 @@ export default {
             currentTab: 'bookings',
             options: ["All bookings", "Future bookings only" ,"Past bookings only"],
             filter:"All bookings",
+            date: '',
+            notes: '',
         }
     },
 
@@ -107,6 +173,14 @@ export default {
     },
 
     methods: {
+        addJournal() {
+            // const payload = {
+            //     date: this.date,
+            //     notes: this.notes,
+            //     client: this.client.id
+            // }
+            // axios.post(`/clients/journals`, payload);
+        },
         switchTab(newTab) {
             this.currentTab = newTab;
         },

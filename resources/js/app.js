@@ -19,15 +19,16 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
+import 'vue-select/dist/vue-select.css';
 
 import { extend } from 'vee-validate';
 import * as rules from 'vee-validate/dist/rules';
-
+import vSelect from 'vue-select'
 Object.keys(rules).forEach(rule => {
   extend(rule, rules[rule]);
 });
 
-
+Vue.component('v-select', vSelect)
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
