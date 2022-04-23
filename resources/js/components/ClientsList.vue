@@ -28,6 +28,14 @@
             </tr>
             </tbody>
         </table>
+        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" v-show="clients.prev_page_url !== null" :href="clients.prev_page_url">Previous</a></li>
+
+                <li class="page-item" :class="{active:clients.current_page ===number }" v-for="number in clients.last_page"><a class="page-link"  :href="'/clients?page='+number">{{ number }}</a></li>
+                <li class="page-item"><a class="page-link" v-show="clients.next_page_url !== null" :href="clients.next_page_url">Next</a></li>
+            </ul>
+        </nav>
     </div>
 </template>
 
@@ -36,11 +44,10 @@ import axios from 'axios';
 
 export default {
     name: 'ClientsList',
-
     props: ['clients'],
     data() {
         return {
-            allClients: this.clients
+            allClients: this.clients.data
         }
     },
 

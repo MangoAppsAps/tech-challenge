@@ -8,7 +8,7 @@ class ClientService
 {
     public function index()
     {
-        $clients=Client::CurrentUser()->latest()->get();
+        $clients=Client::CurrentUser()->latest()->paginate(10);
         return view('clients.index', ['clients' => $clients]);
 
     }

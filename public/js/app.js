@@ -2204,13 +2204,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientsList',
   props: ['clients'],
   data: function data() {
     return {
-      allClients: this.clients
+      allClients: this.clients.data
     };
   },
   methods: {
@@ -38472,6 +38480,80 @@ var render = function () {
         0
       ),
     ]),
+    _vm._v(" "),
+    _c(
+      "nav",
+      {
+        staticClass: "d-flex justify-content-center",
+        attrs: { "aria-label": "Page navigation example" },
+      },
+      [
+        _c(
+          "ul",
+          { staticClass: "pagination" },
+          [
+            _c("li", { staticClass: "page-item" }, [
+              _c(
+                "a",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.clients.prev_page_url !== null,
+                      expression: "clients.prev_page_url !== null",
+                    },
+                  ],
+                  staticClass: "page-link",
+                  attrs: { href: _vm.clients.prev_page_url },
+                },
+                [_vm._v("Previous")]
+              ),
+            ]),
+            _vm._v(" "),
+            _vm._l(_vm.clients.last_page, function (number) {
+              return _c(
+                "li",
+                {
+                  staticClass: "page-item",
+                  class: { active: _vm.clients.current_page === number },
+                },
+                [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "page-link",
+                      attrs: { href: "/clients?page=" + number },
+                    },
+                    [_vm._v(_vm._s(number))]
+                  ),
+                ]
+              )
+            }),
+            _vm._v(" "),
+            _c("li", { staticClass: "page-item" }, [
+              _c(
+                "a",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.clients.next_page_url !== null,
+                      expression: "clients.next_page_url !== null",
+                    },
+                  ],
+                  staticClass: "page-link",
+                  attrs: { href: _vm.clients.next_page_url },
+                },
+                [_vm._v("Next")]
+              ),
+            ]),
+          ],
+          2
+        ),
+      ]
+    ),
   ])
 }
 var staticRenderFns = [
@@ -50890,34 +50972,11 @@ module.exports = function(module) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]);
-Vue.component('clients-list', __webpack_require__(/*! ./components/ClientsList.vue */ "./resources/js/components/ClientsList.vue")["default"]);
-Vue.component('client-form', __webpack_require__(/*! ./components/ClientForm.vue */ "./resources/js/components/ClientForm.vue")["default"]);
-Vue.component('client-show', __webpack_require__(/*! ./components/ClientShow.vue */ "./resources/js/components/ClientShow.vue")["default"]);
-Vue.component('journal-form', __webpack_require__(/*! ./components/JournalForm.vue */ "./resources/js/components/JournalForm.vue")["default"]);
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+__webpack_require__(/*! ./components */ "./resources/js/components.js");
 
 var app = new Vue({
   el: '#app'
@@ -50967,6 +51026,21 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components.js":
+/*!************************************!*\
+  !*** ./resources/js/components.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]);
+Vue.component('clients-list', __webpack_require__(/*! ./components/ClientsList.vue */ "./resources/js/components/ClientsList.vue")["default"]);
+Vue.component('client-form', __webpack_require__(/*! ./components/ClientForm.vue */ "./resources/js/components/ClientForm.vue")["default"]);
+Vue.component('client-show', __webpack_require__(/*! ./components/ClientShow.vue */ "./resources/js/components/ClientShow.vue")["default"]);
+Vue.component('journal-form', __webpack_require__(/*! ./components/JournalForm.vue */ "./resources/js/components/JournalForm.vue")["default"]);
 
 /***/ }),
 

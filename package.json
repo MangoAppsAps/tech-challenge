@@ -24,6 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "laravel-vue-pagination": "^3.0.0",
         "mix-tailwindcss": "^1.3.0",
         "tailwindcss": "^2.1.4"
     }
