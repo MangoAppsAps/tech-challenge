@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\ClientRelations;
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
+    use ClientRelations;
+
     protected $fillable = [
         'name',
         'email',
@@ -17,13 +20,10 @@ class Client extends Model
     ];
 
     protected $appends = [
-        'url','bookings_count'
+        'url',
+        'bookings_count'
     ];
 
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
-    }
 
     public function getBookingsCountAttribute()
     {
@@ -40,13 +40,6 @@ class Client extends Model
     {
         return $this->where('user_id', '=', Auth()->id());
     }
-
-    public function journals()
-    {
-        return $this->hasMany(Journal::class,'client_id','id');
-    }
-
-
 
 
 }
