@@ -1,6 +1,9 @@
 <template>
     <div>
         <h1 class="mb-6">Clients -> Add New Client</h1>
+        <div class="alert alert-danger" role="alert" v-for="error in errors">
+            {{error }}
+        </div>
 
         <div class="max-w-lg mx-auto">
             <div class="form-group">
@@ -53,7 +56,8 @@ export default {
                 address: '',
                 city: '',
                 postcode: '',
-            }
+            },
+            errors:[]
         }
     },
 
@@ -62,7 +66,9 @@ export default {
             axios.post('/clients', this.client)
                 .then((data) => {
                     window.location.href = data.data.url;
-                });
+                }).catch(e=>{
+                    this.errors=e.response.data.errors;
+            });
         }
     }
 }

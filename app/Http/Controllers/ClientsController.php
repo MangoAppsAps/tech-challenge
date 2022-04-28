@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Client;
-use Illuminate\Http\Request;
+use App\Actions\FilterBooking;
+use App\Http\Requests\FilterBookingRequest;
+use App\Http\Requests\StoreClientRequest;
+use App\Models\Client;
+use App\Services\ClientService;
 
 class ClientsController extends Controller
 {
+    private $clientService;
+
+    public function __construct(ClientService $clientService)
+    {
+        $this->clientService = $clientService;
+    }
+
     public function index()
     {
-        $clients = Client::all();
-
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
-
-        return view('clients.index', ['clients' => $clients]);
+        return $this->clientService->index();
     }
 
     public function create()
@@ -23,31 +27,23 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::where('id', $client)->first();
-
-        return view('clients.show', ['client' => $client]);
+        return $this->clientService->show($client);
     }
 
-    public function store(Request $request)
+    public function store(StoreClientRequest $request)
     {
-        $client = new Client;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
-
-        return $client;
+        return $this->clientService->store($request);
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
+        return $this->clientService->destroy($client);
+    }
 
-        return 'Deleted';
+    public function filterBookings(FilterBookingRequest $request, FilterBooking $filterBooking)
+    {
+        return $filterBooking->execute($request)->values();
     }
 }

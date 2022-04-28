@@ -1,28 +1,29 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use App\Traits\ClientRelations;
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
+    use ClientRelations;
+
     protected $fillable = [
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
+        'user_id'
     ];
 
     protected $appends = [
         'url',
+        'bookings_count'
     ];
 
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
-    }
 
     public function getBookingsCountAttribute()
     {
@@ -33,4 +34,12 @@ class Client extends Model
     {
         return "/clients/" . $this->id;
     }
+
+//local scope
+    public function scopeCurrentUser()
+    {
+        return $this->where('user_id', '=', Auth()->id());
+    }
+
+
 }
