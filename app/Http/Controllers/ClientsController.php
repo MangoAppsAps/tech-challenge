@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -43,6 +44,22 @@ class ClientsController extends Controller
          * query builder is just simple and easy to change.
          */
         $client->bookings = $bookings->toArray();
+
+        foreach($client->bookings as $booking)
+        {
+            $booking->formattedTime = Carbon::createFromFormat('Y-m-d H:s:i', $booking->start)
+                ->format('l d F Y');
+
+            $bookingDuration = Carbon::createFromFormat('Y-m-d H:s:i', $booking->start)
+                ->format('H:i');
+
+            $bookingDuration .= ' to ';
+
+            $bookingDuration .= Carbon::createFromFormat('Y-m-d H:s:i', $booking->end)
+                ->format('H:i');
+
+            $booking->formattedTime .= " $bookingDuration";
+        }
 
         return view('clients.show', ['client' => $client]);
     }
