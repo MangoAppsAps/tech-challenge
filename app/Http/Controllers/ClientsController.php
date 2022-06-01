@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientsController extends Controller
 {
@@ -25,7 +26,23 @@ class ClientsController extends Controller
 
     public function show($client)
     {
-        $client = Client::where('id', $client)->first();
+        // Get the bookings before the client id is used
+        $bookings = DB::table('bookings')
+            ->where('client_id', $client)
+            ->get();
+
+        // Find out client
+        $client = DB::table('clients')
+            ->where('id', $client)
+            ->first();
+
+        /*
+         * Could have used with() but Eloquent ends up
+         * using two queries anyway. Plus the query builder
+         * gives more control and better readability. The
+         * query builder is just simple and easy to change.
+         */
+        $client->bookings = $bookings->toArray();
 
         return view('clients.show', ['client' => $client]);
     }
