@@ -83,6 +83,11 @@ class ClientsController extends Controller
 
         $journals = Journal::where('client_id', $clientId)->get();
 
+        foreach($journals as $journal)
+        {
+            $journal->formattedTime = $journal->created_at->format('Y-m-d');
+        }
+
         return view('clients.show', ['client' => $client, 'journals' => $journals]);
     }
 

@@ -95,7 +95,7 @@
                         </thead>
                         <tbody>
                         <tr v-for="clientJournal in journals" :key="clientJournal.id">
-                            <td>{{ clientJournal.created_at }}</td>
+                            <td>{{ clientJournal.formattedTime }}</td>
                             <td>{{ clientJournal.journal }}</td>
                             <td>
                                 <button class="btn btn-danger btn-sm" @click="deleteJournal(clientJournal)">Delete</button>
