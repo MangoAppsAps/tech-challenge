@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Journal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +49,9 @@ class ClientsController extends Controller
 
         $bookings = $bookings->get();
 
+        // We need to use this ID to get the journals later...
+        $clientId = $client;
+
         // Find out client
         $client = DB::table('clients')
             ->where('id', $client)
@@ -77,7 +81,9 @@ class ClientsController extends Controller
             $booking->formattedTime .= " $bookingDuration";
         }
 
-        return view('clients.show', ['client' => $client]);
+        $journals = Journal::where('client_id', $clientId)->get();
+
+        return view('clients.show', ['client' => $client, 'journals' => $journals]);
     }
 
     public function store(Request $request)

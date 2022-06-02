@@ -73,7 +73,37 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <p>Write a new journal for a client:</p>
+
+                    <textarea id="journalTextInput" name="journalText" rows="8" cols="60" style="border: 1px solid grey"></textarea>
+
+                    <a class="btn btn-primary btn-sm" @click="createJournal()">Save New Journal</a>
+
+                    <br/>
+
+                    <p>Current client journals:</p>
+
+                    <br/>
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Journal</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="clientJournal in journals" :key="clientJournal.id">
+                            <td>{{ clientJournal.created_at }}</td>
+                            <td>{{ clientJournal.journal }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" @click="deleteJournal(clientJournal)">Delete</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </div>
@@ -86,7 +116,7 @@ import axios from 'axios';
 export default {
     name: 'ClientShow',
 
-    props: ['client'],
+    props: ['client', 'journals'],
 
     mounted: function(){
 
@@ -131,6 +161,33 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+
+        createJournal()
+        {
+            const clientId = window.location.pathname.split("/").pop();
+
+            const journal = {
+                journal: document.getElementById('journalTextInput').value,
+            };
+
+            axios.post('/clients/' + clientId + '/journals', journal)
+                .then(() => {
+
+                    // Out of scope but could obviously have better UI feedback after this event
+                    window.location.reload();
+                });
+        },
+
+        deleteJournal(journal)
+        {
+            const clientId = window.location.pathname.split("/").pop();
+
+            axios.delete(`/clients/${clientId}/journals/${journal.id}`).then(function() {
+
+                // Out of scope but could obviously have better UI feedback after this event
+                window.location.reload();
+            });
         }
     }
 }
