@@ -59,9 +59,22 @@ export default {
 
     methods: {
         storeClient() {
+
             axios.post('/clients', this.client)
                 .then((data) => {
                     window.location.href = data.data.url;
+                })
+                .catch(function(error) {
+
+                    let errorMsgs = error.response.data.errors;
+
+                    for (const key in errorMsgs) {
+
+                        for (let i in errorMsgs[key]) {
+                            alert(errorMsgs[key][i]);
+                        }
+
+                    }
                 });
         }
     }

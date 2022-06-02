@@ -69,13 +69,22 @@ class ClientsController extends Controller
 
     public function store(Request $request)
     {
+        $validatedClientData = $request->validate([
+            'name' => 'required|max:190',
+            'email' => 'bail|nullable|required_without:phone|email:rfc,dns',
+            'phone' => 'bail|nullable|required_without:email|min:10|regex:/^([0-9\s\-\+\(\)]*)$/',
+            'address' => 'required',
+            'city' => 'required',
+            'postcode' => 'required'
+        ]);
+
         $client = new Client;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->address = $request->get('address');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
+        $client->name = $validatedClientData['name'];
+        $client->email = $validatedClientData['email'];
+        $client->phone = $validatedClientData['phone'];
+        $client->address = $validatedClientData['address'];
+        $client->city = $validatedClientData['city'];
+        $client->postcode = $validatedClientData['postcode'];
         $client->owned_by = Auth::id();
         $client->save();
 
