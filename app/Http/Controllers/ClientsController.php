@@ -6,12 +6,14 @@ use App\Client;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $userId = Auth::id();
+        $clients = Client::where('owned_by', $userId)->get();
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
@@ -74,6 +76,7 @@ class ClientsController extends Controller
         $client->address = $request->get('adress');
         $client->city = $request->get('city');
         $client->postcode = $request->get('postcode');
+        $client->owned_by = Auth::id();
         $client->save();
 
         return $client;
