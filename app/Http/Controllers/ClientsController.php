@@ -30,6 +30,7 @@ class ClientsController extends Controller
         // Get the bookings before the client id is used
         $bookings = DB::table('bookings')
             ->where('client_id', $client)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         // Find out client
