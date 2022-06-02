@@ -68,8 +68,10 @@ export default {
 
                     let errorMsgs = error.response.data.errors;
 
+                    // Loop through all errors and messages
                     for (const key in errorMsgs) {
 
+                        // Each field may have multiple errors
                         for (let i in errorMsgs[key]) {
                             alert(errorMsgs[key][i]);
                         }
