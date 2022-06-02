@@ -21,6 +21,15 @@ class CreateClientsTable extends Migration
             $table->string('address')->nullable();
             $table->string('city')->nullable();
             $table->string('postcode')->nullable();
+
+            /*
+             * Nullable for the scope of this project because of faker data.
+             * Users have to be created first before you can fake this data.
+             * So I manually added some new clients or changed the column in
+             * the DB after seeding it. Real world application would need this
+             * to not be null...
+             */
+            $table->integer('owned_by')->nullable();
             $table->timestamps();
         });
     }

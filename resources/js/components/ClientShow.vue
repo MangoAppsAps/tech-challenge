@@ -30,6 +30,9 @@
             </div>
 
             <div class="w-2/3">
+                <select id="bookingFilterDropdown" @change="changeBookingFilter($event)">
+                    <option v-for="filter in bookingFilterItems" :value="filter.value" :key="filter.value">{{ filter.label }}</option>
+                </select>
                 <div>
                     <button class="btn" :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
                     <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
@@ -50,7 +53,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                    <td>{{ booking.formattedTime }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -70,7 +73,37 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <p>Write a new journal for a client:</p>
+
+                    <textarea id="journalTextInput" name="journalText" rows="8" cols="60" style="border: 1px solid grey"></textarea>
+
+                    <a class="btn btn-primary btn-sm" @click="createJournal()">Save New Journal</a>
+
+                    <br/>
+
+                    <p>Current client journals:</p>
+
+                    <br/>
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Journal</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="clientJournal in journals" :key="clientJournal.id">
+                            <td>{{ clientJournal.formattedTime }}</td>
+                            <td>{{ clientJournal.journal }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" @click="deleteJournal(clientJournal)">Delete</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </div>
@@ -83,11 +116,34 @@ import axios from 'axios';
 export default {
     name: 'ClientShow',
 
-    props: ['client'],
+    props: ['client', 'journals'],
+
+    mounted: function(){
+
+        const params = new URLSearchParams(window.location.search);
+        let bookingFilter = params.get('bookingFilter');
+
+        if(bookingFilter !== null)
+        {
+            bookingFilter = params.get('bookingFilter');
+        }
+        else
+        {
+            bookingFilter = 'all';
+        }
+
+        document.querySelector('#bookingFilterDropdown').value = bookingFilter;
+    },
 
     data() {
         return {
             currentTab: 'bookings',
+
+            bookingFilterItems: [
+                {value: 'all', label: 'All bookings'},
+                {value: 'future', label: 'Future bookings only'},
+                {value: 'past', label: 'Past bookings only'},
+            ],
         }
     },
 
@@ -96,8 +152,42 @@ export default {
             this.currentTab = newTab;
         },
 
+        changeBookingFilter(event)
+        {
+            let selectedFilter = event.target.value;
+
+            window.location.href = window.location.pathname + "?bookingFilter=" + selectedFilter;
+        },
+
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+
+        createJournal()
+        {
+            const clientId = window.location.pathname.split("/").pop();
+
+            const journal = {
+                journal: document.getElementById('journalTextInput').value,
+            };
+
+            axios.post('/clients/' + clientId + '/journals', journal)
+                .then(() => {
+
+                    // Out of scope but could obviously have better UI feedback after this event
+                    window.location.reload();
+                });
+        },
+
+        deleteJournal(journal)
+        {
+            const clientId = window.location.pathname.split("/").pop();
+
+            axios.delete(`/clients/${clientId}/journals/${journal.id}`).then(function() {
+
+                // Out of scope but could obviously have better UI feedback after this event
+                window.location.reload();
+            });
         }
     }
 }

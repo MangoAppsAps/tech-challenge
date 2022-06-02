@@ -16,14 +16,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr v-for="(client, index) in clients" :key="client.id">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
                     <td>{{ client.bookings_count }}</td>
                     <td>
                         <a class="btn btn-primary btn-sm" :href="`/clients/${client.id}`">View</a>
-                        <button class="btn btn-danger btn-sm" @click="deleteClient(client)">Delete</button>
+                        <button class="btn btn-danger btn-sm" @click="deleteClient(client, index, $event)">Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -40,8 +40,17 @@ export default {
     props: ['clients'],
 
     methods: {
-        deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+        deleteClient(client, index, event) {
+
+            // Remove client from the local array
+            this.clients.splice(index, 1);
+
+            // Fire off the delete request and then...
+            axios.delete(`/clients/${client.id}`).then(function()
+            {
+                // Give feedback to the user via the UI to remove that table row
+                event.target.parentElement.parentElement.remove();
+            });
         }
     }
 }
