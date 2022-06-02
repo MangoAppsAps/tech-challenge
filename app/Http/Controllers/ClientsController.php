@@ -27,13 +27,26 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Request $request, $client)
     {
         // Get the bookings before the client id is used
         $bookings = DB::table('bookings')
             ->where('client_id', $client)
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->orderBy('created_at', 'desc');
+
+        // We only need to set a filter if future or past are selected
+        if($bookingFilter = $request->query('bookingFilter'))
+        {
+            // Safe method to use data from the request and convert to DB operators
+            $filters = [
+                'future' => '>',
+                'past' => '<',
+            ];
+
+            $bookings->where('start', $filters[$bookingFilter], Carbon::now());
+        }
+
+        $bookings = $bookings->get();
 
         // Find out client
         $client = DB::table('clients')

@@ -30,6 +30,9 @@
             </div>
 
             <div class="w-2/3">
+                <select id="bookingFilterDropdown" @change="changeBookingFilter($event)">
+                    <option v-for="filter in bookingFilterItems" :value="filter.value" :key="filter.value">{{ filter.label }}</option>
+                </select>
                 <div>
                     <button class="btn" :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
                     <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
@@ -85,15 +88,45 @@ export default {
 
     props: ['client'],
 
+    mounted: function(){
+
+        const params = new URLSearchParams(window.location.search);
+        let bookingFilter = params.get('bookingFilter');
+
+        if(bookingFilter !== null)
+        {
+            bookingFilter = params.get('bookingFilter');
+        }
+        else
+        {
+            bookingFilter = 'all';
+        }
+
+        document.querySelector('#bookingFilterDropdown').value = bookingFilter;
+    },
+
     data() {
         return {
             currentTab: 'bookings',
+
+            bookingFilterItems: [
+                {value: 'all', label: 'All bookings'},
+                {value: 'future', label: 'Future bookings only'},
+                {value: 'past', label: 'Past bookings only'},
+            ],
         }
     },
 
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;
+        },
+
+        changeBookingFilter(event)
+        {
+            let selectedFilter = event.target.value;
+
+            window.location.href = window.location.pathname + "?bookingFilter=" + selectedFilter;
         },
 
         deleteBooking(booking) {
