@@ -37,9 +37,15 @@
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
-                    <h3 class="mb-3">List of client bookings</h3>
-
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <div class="flex justify-between">
+                        <h3 class="mb-3">List of client bookings</h3>
+                        <select v-model="timeRange">
+                            <option value="all">All bookings</option>
+                            <option value="future">Future bookings only</option>
+                            <option value="past">Past bookings only</option>
+                        </select>
+                    </div>
+                    <template v-if="bookings && bookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,11 +55,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                <tr v-for="(booking, key) in bookings" :key="booking.id">
+                                    <td>{{ booking.time_range }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
-                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
+                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking, key)">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -68,9 +74,31 @@
 
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
-                    <h3 class="mb-3">List of client journals</h3>
+                    <h3 class="mb-3">List of client journals
+                        <a :href="client.id + '/journals/create'" class="float-right btn btn-primary">+ New Journal</a></h3>
+                    <template v-if="journals && journals.length > 0">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Text</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(journal, key) in journals" :key="journal.id">
+                                <td>{{ journal.text }}</td>
+                                <td>{{ journal.date }}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" @click="deleteJournal(journal, key)">Delete</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </template>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <template v-else>
+                        <p class="text-center">The client has no Journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -87,17 +115,84 @@ export default {
 
     data() {
         return {
+            bookings: {},
+            journals: {},
             currentTab: 'bookings',
+            timeRange: 'all' // possible values: all, past, future
+        }
+    },
+
+    mounted() {
+       this.getBookings();
+    },
+
+    watch: {
+        timeRange(newTimeRange, oldTimeRange) {
+            this.getBookings();
         }
     },
 
     methods: {
         switchTab(newTab) {
+            if (newTab === 'journals' && Object.keys(this.journals).length === 0) {
+                this.getJournals();
+            }
             this.currentTab = newTab;
         },
+        getBookings() {
+            this.bookings = {};
 
-        deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
+            axios.get(`/clients/${this.client.id}/bookings`, {
+                params: {
+                    'time_range': this.timeRange
+                }
+            }).then((data) => {
+                this.bookings = data.data.bookings;
+            }).catch((errors) => {
+                if (errors.response.status === 422) {
+                    this.errors = errors.response.data.errors
+                } else {
+                    alert('Something unpredictable happened. Please, kick developer.')
+                }
+            });
+        },
+        deleteBooking(booking, key) {
+            axios.delete(`/clients/${this.client.id}/bookings/${booking.id}`)
+                .then(() => {
+                    this.bookings.splice(key, 1);
+                }).catch((errors) => {
+                if (errors.response.status === 422) {
+                    this.errors = errors.response.data.errors
+                } else {
+                    alert('Something unpredictable happened. Please, kick developer.')
+                }
+            });
+        },
+        getJournals() {
+            this.journals = {};
+
+            axios.get(`/clients/${this.client.id}/journals`)
+                .then((data) => {
+                    this.journals = data.data.journals;
+                }).catch((errors) => {
+                if (errors.response.status === 422) {
+                    this.errors = errors.response.data.errors
+                } else {
+                    alert('Something unpredictable happened. Please, kick developer.')
+                }
+            });
+        },
+        deleteJournal(journal, key) {
+            axios.delete(`/clients/${this.client.id}/journals/${journal.id}`)
+                .then(() => {
+                    this.journals.splice(key, 1);
+                }).catch((errors) => {
+                if (errors.response.status === 422) {
+                    this.errors = errors.response.data.errors
+                } else {
+                    alert('Something unpredictable happened. Please, kick developer.')
+                }
+            });
         }
     }
 }

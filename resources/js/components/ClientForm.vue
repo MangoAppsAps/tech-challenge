@@ -1,5 +1,11 @@
 <template>
     <div>
+        <ul>
+            <li v-for="error in errors">
+                {{ error }}
+            </li>
+        </ul>
+
         <h1 class="mb-6">Clients -> Add New Client</h1>
 
         <div class="max-w-lg mx-auto">
@@ -53,16 +59,25 @@ export default {
                 address: '',
                 city: '',
                 postcode: '',
-            }
+            },
+            errors: {}
         }
     },
 
     methods: {
         storeClient() {
+            this.errors = {};
+
             axios.post('/clients', this.client)
                 .then((data) => {
                     window.location.href = data.data.url;
-                });
+                }).catch((errors) => {
+                if (errors.response.status === 422) {
+                    this.errors = errors.response.data.errors
+                } else {
+                    alert('Something unpredictable happened. Please, kick developer.')
+                }
+            });
         }
     }
 }

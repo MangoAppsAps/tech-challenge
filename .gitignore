@@ -1,5 +1,10 @@
 /node_modules
 /public/hot
+
+# this directories should be always ignored
+/public/js
+/public/css
+
 /public/storage
 /storage/*.key
 /vendor
