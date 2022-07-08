@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Client extends Model
 {
@@ -10,9 +11,10 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
+        'user_id'
     ];
 
     protected $appends = [
@@ -24,13 +26,18 @@ class Client extends Model
         return $this->hasMany(Booking::class);
     }
 
-    public function getBookingsCountAttribute()
+    public function journals()
     {
-        return $this->bookings->count();
+        return $this->hasMany(Journal::class);
     }
 
     public function getUrlAttribute()
     {
         return "/clients/" . $this->id;
+    }
+
+    public function scopeFilterByAuthUser($query)
+    {
+        return $query->whereUserId(Auth::id());
     }
 }
