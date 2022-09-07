@@ -37,7 +37,14 @@
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
-                    <h3 class="mb-3">List of client bookings</h3>
+                    <div class="flex justify-between mb-3">
+                        <h3>List of client bookings</h3>
+                        <select class="rounded bg-white border" v-model="selectedBookingFilter">
+                            <option v-for="option in bookingFilterOptions" :value="option.value">
+                                {{ option.text }}
+                            </option>
+                        </select>
+                    </div>
 
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
@@ -49,7 +56,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in filteredBookings" :key="booking.id">
                                     <td>{{ formatBookingDate(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -89,7 +96,31 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            bookingFilterOptions: [
+                { text: 'All bookings', value: 'all' },
+                { text: 'Future bookings only', value: 'future' },
+                { text: 'Past bookings only', value: 'past' }
+            ],
+            selectedBookingFilter: 'all',
         }
+    },
+
+    computed: {
+        filteredBookings() {
+            const bookings = this.client.bookings;
+
+            if (this.selectedBookingFilter === 'all') {
+                return bookings;
+            }
+
+            return bookings.filter((booking) => {
+                const startDate = DateTime.fromISO(booking.start);
+
+                return this.selectedBookingFilter === 'future' ?
+                    startDate > DateTime.now() :
+                    startDate < DateTime.now();
+            });
+        },
     },
 
     methods: {
