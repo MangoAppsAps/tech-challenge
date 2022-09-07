@@ -17,4 +17,9 @@ class Booking extends Model
         'start',
         'end',
     ];
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
 }
