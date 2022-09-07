@@ -50,7 +50,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                    <td>{{ formatBookingDate(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -79,6 +79,7 @@
 
 <script>
 import axios from 'axios';
+import { DateTime } from 'luxon';
 
 export default {
     name: 'ClientShow',
@@ -94,6 +95,17 @@ export default {
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;
+        },
+
+        formatBookingDate(startDate, endDate) {
+            startDate = DateTime.fromISO(startDate).setLocale('en-gb');
+            endDate = DateTime.fromISO(endDate).setLocale('en-gb');
+
+            const formattedDate = startDate.toLocaleString(DateTime.DATE_HUGE);
+            const startTime = startDate.toLocaleString(DateTime.TIME_SIMPLE);
+            const endTime = endDate.toLocaleString(DateTime.TIME_SIMPLE);
+
+            return `${formattedDate}, ${startTime} to ${endTime}`
         },
 
         deleteBooking(booking) {

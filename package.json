@@ -24,6 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "luxon": "^3.0.3",
         "mix-tailwindcss": "^1.3.0",
         "tailwindcss": "^2.1.4"
     }
