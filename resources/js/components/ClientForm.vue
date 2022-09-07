@@ -5,15 +5,36 @@
         <div class="max-w-lg mx-auto">
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" id="name" class="form-control" v-model="client.name">
+                <input
+                    type="text"
+                    id="name"
+                    class="form-control"
+                    v-model="client.name"
+                    v-validate="'max:190'"
+                    name="Name"
+                >
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="text" id="email" class="form-control" v-model="client.email">
+                <input
+                    type="text"
+                    id="email"
+                    class="form-control"
+                    v-model="client.email"
+                    v-validate="'email'"
+                    name="Email"
+                >
             </div>
             <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="text" id="phone" class="form-control" v-model="client.phone">
+                <input
+                    type="text"
+                    id="phone"
+                    class="form-control"
+                    v-model="client.phone"
+                    v-validate="{ regex: '^[0-9+ ]+$' }"
+                    name="Phone"
+                >
             </div>
             <div class="form-group">
                 <label for="name">Address</label>
@@ -30,9 +51,15 @@
                 </div>
             </div>
 
+            <div class="text-red-600" v-if="hasValidationErrors">
+                <span v-for="error in validationErrors" :key="error">
+                    {{ error }}<br>
+                </span>
+            </div>
+
             <div class="text-right">
                 <a href="/clients" class="btn btn-default">Cancel</a>
-                <button @click="storeClient" class="btn btn-primary">Create</button>
+                <button @click="storeClient" class="btn btn-primary" :disabled="hasValidationErrors">Create</button>
             </div>
         </div>
     </div>
@@ -55,6 +82,29 @@ export default {
                 postcode: '',
             }
         }
+    },
+
+    computed: {
+        requiredFieldErrors() {
+            const errors = [];
+
+            if (!this.client.name) {
+                errors.push('The Name field is required');
+            }
+
+            if (!this.client.email && !this.client.phone) {
+                errors.push('The Email or Phone field is required');
+            }
+
+            return errors;
+        },
+        validationErrors() {
+            const veeValidateErrors = this.errors.all();
+            return veeValidateErrors.concat(this.requiredFieldErrors);
+        },
+        hasValidationErrors() {
+            return this.validationErrors && this.validationErrors.length > 0;
+        },
     },
 
     methods: {
