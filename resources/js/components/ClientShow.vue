@@ -44,6 +44,7 @@
                                 {{ option.text }}
                             </option>
                         </select>
+                        <a :href="`/clients/${client.id}/bookings/create`" class="btn btn-primary">+ New Booking</a>
                     </div>
 
                     <template v-if="client.bookings && client.bookings.length > 0">
@@ -70,7 +71,6 @@
                     <template v-else>
                         <p class="text-center">The client has no bookings.</p>
                     </template>
-
                 </div>
 
                 <!-- Journals -->
@@ -140,8 +140,9 @@ export default {
         },
 
         deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
-        }
+            axios.delete(`/clients/${this.client.id}/bookings/${booking.id}`)
+                .then(() => location.reload());
+        },
     }
 }
 </script>

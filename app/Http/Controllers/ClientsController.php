@@ -24,9 +24,9 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show($clientId)
     {
-        $client = Client::where('id', $client)->with('bookings')->first();
+        $client = Client::where('id', $clientId)->with('bookings')->first();
 
         return view('clients.show', ['client' => $client]);
     }
@@ -48,9 +48,9 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy($clientId)
     {
-        Client::where('id', $client)->delete();
+        Client::where('id', $clientId)->delete();
 
         return 'Deleted';
     }
