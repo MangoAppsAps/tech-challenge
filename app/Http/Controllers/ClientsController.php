@@ -9,7 +9,8 @@ class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $user = auth()->user();
+        $clients = Client::where('user_id', $user->id)->get();
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
@@ -32,7 +33,10 @@ class ClientsController extends Controller
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+
         $client = new Client;
+        $client->user_id = $user->id;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
