@@ -31,12 +31,12 @@
 
             <div class="w-2/3">
                 <div>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
+                    <button class="btn" :class="{'btn-primary': currentTab === 'bookings', 'btn-default': currentTab !=='bookings'}" @click="switchTab('bookings')">Bookings</button>
+                    <button class="btn" :class="{'btn-primary': currentTab === 'journals', 'btn-default': currentTab !== 'journals'}" @click="switchTab('journals')">Journals</button>
                 </div>
 
                 <!-- Bookings -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
+                <div class="bg-white rounded p-4" v-if="currentTab === 'bookings'">
                     <div class="flex justify-between mb-3">
                         <h3>List of client bookings</h3>
                         <select class="rounded bg-white border" v-model="selectedBookingFilter">
@@ -74,7 +74,7 @@
                 </div>
 
                 <!-- Journals -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
+                <div class="bg-white rounded p-4" v-if="currentTab === 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
 
                     <p>(BONUS) TODO: implement this feature</p>
