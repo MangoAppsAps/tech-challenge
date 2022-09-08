@@ -42,7 +42,7 @@ export default {
     methods: {
         deleteClient(client) {
             axios.delete(`/clients/${client.id}`)
-                .then(() => location.reload());
+                .then(() => window.location.reload());
         }
     }
 }

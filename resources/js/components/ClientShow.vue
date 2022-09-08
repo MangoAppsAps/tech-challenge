@@ -109,17 +109,16 @@ export default {
         filteredBookings() {
             const bookings = this.client.bookings;
 
-            if (this.selectedBookingFilter === 'all') {
-                return bookings;
+            switch (this.selectedBookingFilter) {
+                case 'all':
+                    return bookings;
+                case 'future':
+                    return bookings.filter(({ start }) => DateTime.fromISO(start) > DateTime.now());
+                case 'past':
+                    return bookings.filter(({ start }) => DateTime.fromISO(start) < DateTime.now());
+                default:
+                    return bookings;
             }
-
-            return bookings.filter((booking) => {
-                const startDate = DateTime.fromISO(booking.start);
-
-                return this.selectedBookingFilter === 'future' ?
-                    startDate > DateTime.now() :
-                    startDate < DateTime.now();
-            });
         },
     },
 
@@ -141,7 +140,7 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/clients/${this.client.id}/bookings/${booking.id}`)
-                .then(() => location.reload());
+                .then(() => window.location.reload());
         },
     }
 }
