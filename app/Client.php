@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Client extends Model
 {
@@ -19,21 +20,17 @@ class Client extends Model
         'user_id',
     ];
 
-    protected $appends = [
-        'url',
-    ];
-
-    public function bookings()
+    public function bookings(): Relation
     {
         return $this->hasMany(Booking::class);
     }
 
-    public function journals()
+    public function journals(): Relation
     {
         return $this->hasMany(Journal::class);
     }
 
-    public function getUrlAttribute()
+    public function getUrlAttribute(): string
     {
         return route('clients.show', ['client' => $this->id]);
     }

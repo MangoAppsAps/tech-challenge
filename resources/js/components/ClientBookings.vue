@@ -80,7 +80,6 @@ export default {
     beforeMount() {
         this.loadBookings();
     },
-
     watch: {
         currentUrl(newUrl) {
             this.loadBookings(newUrl);

@@ -31,14 +31,12 @@ export default {
         FormTextarea,
         FormInput
     },
-
     props: {
         clientId: {
             type: Number,
             required: true
         }
     },
-
     data() {
         return {
             isSubmitting: false,
@@ -48,7 +46,6 @@ export default {
             }
         }
     },
-
     methods: {
         submit() {
             if (this.isSubmitting) return;
