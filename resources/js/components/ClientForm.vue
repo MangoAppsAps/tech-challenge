@@ -20,7 +20,7 @@
                     <label for="name">Address</label>
                     <FormInput type="text" id="address" v-model="client.address" :error="errors.address"/>
                 </div>
-                <div class="flex">
+                <div class="flex space-x-4">
                     <div class="form-group flex-1">
                         <label for="city">City</label>
                         <FormInput type="text" id="city" v-model="client.city" :error="errors.city"/>
@@ -49,7 +49,6 @@ import {isEmail, isMax, isRegex, isRequired, isRequiredWithout} from "intus/rule
 export default {
     name: 'ClientForm',
     components: {FormInput},
-
     data() {
         return {
             isSubmitting: false,
@@ -64,7 +63,6 @@ export default {
             }
         }
     },
-
     methods: {
         submit() {
             if (this.isSubmitting) return;
@@ -73,6 +71,8 @@ export default {
                 name: [isRequired(), isMax(190)],
                 email: [isRequiredWithout('phone'), isEmail()],
                 phone: [isRequiredWithout('email'), isRegex(/^[+]?[ ]*[0-9 ]*$/)],
+            }, {
+                "phone.isRegex": "Phone can only contain a plus sign, digits and spaces."
             });
 
             this.errors = validation.errors();
@@ -81,6 +81,17 @@ export default {
                 this.isSubmitting = true;
                 axios.post('/clients', this.client)
                     .then((data) => window.location.href = data.data.url)
+                    .catch((error) => {
+                        if (error.response.status === 422) {
+                            let errors = error.response.data.errors;
+
+                            for (let field in errors) {
+                                errors[field] = errors[field][0];
+                            }
+
+                            this.errors = errors;
+                        }
+                    })
                     .finally(() => this.isSubmitting = false);
             }
         }

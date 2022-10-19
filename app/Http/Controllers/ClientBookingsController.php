@@ -18,11 +18,12 @@ class ClientBookingsController extends Controller
             ->when(in_array(request('time'), ['past', 'future']), function ($query) {
                 $operator = request('time') === 'past' ? '<' : '>';
                 $query->where('start', $operator, now());
-            });
+            })
+            ->latest()
+            ->paginate()
+            ->withQueryString();
 
-        return BookingResource::collection(
-            $bookings->latest()->paginate()->withQueryString()
-        );
+        return BookingResource::collection($bookings);
     }
 
     public function destroy(Client $client, Booking $booking): JsonResponse

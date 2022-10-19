@@ -29,7 +29,6 @@ export default {
             required: true
         }
     },
-
     computed: {
         hasNavigateListener() {
             return !!this.$listeners?.navigate;

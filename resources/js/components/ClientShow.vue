@@ -60,20 +60,17 @@ export default {
         ClientBookings,
         ClientJournals
     },
-
     props: {
         client: {
             type: Object,
             required: true
         }
     },
-
     data() {
         return {
             currentTab: 'bookings',
         }
     },
-
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;

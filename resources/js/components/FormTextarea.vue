@@ -13,14 +13,12 @@ export default {
     inheritAttrs: false,
     props: {
         value: {
-            type: [String, Number],
-            required: true,
+            type: String,
         },
         error: {
             type: String
         }
     },
-
     mounted() {
         if (this.$refs.textarea.hasAttribute('autofocus')) {
             this.$refs.textarea.focus();

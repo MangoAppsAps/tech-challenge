@@ -10,12 +10,12 @@ class ClientPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, Client $client)
+    public function view(User $user, Client $client): bool
     {
         return $client->user_id === $user->id;
     }
 
-    public function delete(User $user, Client $client)
+    public function delete(User $user, Client $client): bool
     {
         return $client->user_id === $user->id;
     }

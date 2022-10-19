@@ -52,8 +52,11 @@
             <p class="text-center">Loading journals...</p>
         </div>
 
-        <base-pagination v-if="pagination.last_page > 1" class="mt-4" @navigate="handleNavigate"
-                         :pagination="pagination"/>
+        <base-pagination
+            v-if="pagination.last_page > 1"
+            class="mt-4"
+            @navigate="handleNavigate"
+            :pagination="pagination"/>
     </div>
 </template>
 
@@ -64,14 +67,12 @@ import JournalForm from "./JournalForm";
 
 export default {
     components: {BasePagination, JournalForm},
-
     props: {
         clientId: {
             type: Number,
             required: true
         }
     },
-
     data() {
         return {
             showJournalForm: false,
@@ -81,11 +82,9 @@ export default {
             currentUrl: `/clients/${this.clientId}/journals`
         }
     },
-
     beforeMount() {
         this.loadJournals();
     },
-
     watch: {
         currentUrl(newUrl) {
             this.loadJournals(newUrl);
@@ -94,7 +93,6 @@ export default {
             this.loadJournals(this.pagination.path, {time: time});
         }
     },
-
     methods: {
         loadJournals(url = this.currentUrl, params = {}) {
             this.isLoadingJournals = true;

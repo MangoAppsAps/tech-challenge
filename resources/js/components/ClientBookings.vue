@@ -43,8 +43,11 @@
             <p class="text-center">Loading bookings...</p>
         </div>
 
-        <base-pagination v-if="pagination.last_page > 1" class="mt-4" @navigate="handleNavigate"
-                         :pagination="pagination"/>
+        <base-pagination
+            v-if="pagination.last_page > 1"
+            class="mt-4"
+            @navigate="handleNavigate"
+            :pagination="pagination"/>
     </div>
 </template>
 
@@ -54,14 +57,12 @@ import BasePagination from "./BasePagination";
 
 export default {
     components: {BasePagination},
-
     props: {
         clientId: {
             type: Number,
             required: true
         }
     },
-
     data() {
         return {
             bookings: [],
@@ -76,7 +77,6 @@ export default {
             timeFilter: null
         }
     },
-
     beforeMount() {
         this.loadBookings();
     },
@@ -89,7 +89,6 @@ export default {
             this.loadBookings(this.pagination.path, {time});
         }
     },
-
     methods: {
         loadBookings(url = this.currentUrl, params = {}) {
             this.isLoadingBookings = true;

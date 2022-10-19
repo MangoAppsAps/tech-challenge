@@ -14,13 +14,11 @@ export default {
     props: {
         value: {
             type: [String, Number],
-            required: true,
         },
         error: {
             type: String
         }
     },
-
     mounted() {
         if (this.$refs.input.hasAttribute('autofocus')) {
             this.$refs.input.focus();

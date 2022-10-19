@@ -1953,12 +1953,22 @@ __webpack_require__.r(__webpack_exports__);
         name: [(0,intus_rules__WEBPACK_IMPORTED_MODULE_3__.isRequired)(), (0,intus_rules__WEBPACK_IMPORTED_MODULE_3__.isMax)(190)],
         email: [(0,intus_rules__WEBPACK_IMPORTED_MODULE_3__.isRequiredWithout)('phone'), (0,intus_rules__WEBPACK_IMPORTED_MODULE_3__.isEmail)()],
         phone: [(0,intus_rules__WEBPACK_IMPORTED_MODULE_3__.isRequiredWithout)('email'), (0,intus_rules__WEBPACK_IMPORTED_MODULE_3__.isRegex)(/^[+]?[ ]*[0-9 ]*$/)]
+      }, {
+        "phone.isRegex": "Phone can only contain a plus sign, digits and spaces."
       });
       this.errors = validation.errors();
       if (validation.passes()) {
         this.isSubmitting = true;
         axios__WEBPACK_IMPORTED_MODULE_0___default().post('/clients', this.client).then(function (data) {
           return window.location.href = data.data.url;
+        })["catch"](function (error) {
+          if (error.response.status === 422) {
+            var errors = error.response.data.errors;
+            for (var field in errors) {
+              errors[field] = errors[field][0];
+            }
+            _this.errors = errors;
+          }
         })["finally"](function () {
           return _this.isSubmitting = false;
         });
@@ -2182,8 +2192,7 @@ __webpack_require__.r(__webpack_exports__);
   inheritAttrs: false,
   props: {
     value: {
-      type: [String, Number],
-      required: true
+      type: [String, Number]
     },
     error: {
       type: String
@@ -2213,8 +2222,7 @@ __webpack_require__.r(__webpack_exports__);
   inheritAttrs: false,
   props: {
     value: {
-      type: [String, Number],
-      required: true
+      type: String
     },
     error: {
       type: String
@@ -2291,6 +2299,14 @@ var emptyForm = {
           _this.$emit('created', data);
           _this.$emit('close');
           _this.journal = _objectSpread({}, emptyForm);
+        })["catch"](function (error) {
+          if (error.response.status === 422) {
+            var errors = error.response.data.errors;
+            for (var field in errors) {
+              errors[field] = errors[field][0];
+            }
+            _this.errors = errors;
+          }
         })["finally"](function () {
           return _this.isSubmitting = false;
         });
@@ -2547,7 +2563,7 @@ var render = function render() {
       expression: "client.address"
     }
   })], 1), _vm._v(" "), _c("div", {
-    staticClass: "flex"
+    staticClass: "flex space-x-4"
   }, [_c("div", {
     staticClass: "form-group flex-1"
   }, [_c("label", {

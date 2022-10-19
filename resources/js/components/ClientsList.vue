@@ -40,20 +40,17 @@ import axios from 'axios';
 
 export default {
     name: 'ClientsList',
-
     props: {
         initialClients: {
             type: Array,
             required: true
         }
     },
-
     data() {
         return {
             clients: [...this.initialClients].map(client => ({...client}))
         }
     },
-
     methods: {
         deleteClient(client, index) {
             if (confirm(`Are you sure you want to delete client: ${client.name}?`)) {

@@ -15,7 +15,9 @@ class ClientJournalsController extends Controller
     {
         $this->authorize('view', [Journal::class, $client]);
 
-        return JournalResource::collection($client->journals()->latest()->paginate());
+        $journals = $client->journals()->latest()->paginate();
+
+        return JournalResource::collection($journals);
     }
 
     public function store(Client $client, JournalStoreRequest $request): JsonResource
