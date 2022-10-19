@@ -25,6 +25,32 @@ Vue.component('client-form', require('./components/ClientForm.vue').default);
 Vue.component('client-show', require('./components/ClientShow.vue').default);
 Vue.component('base-pagination', require('./components/BasePagination.vue').default);
 
+Vue.mixin({
+    methods: {
+        processServerError(error) {
+            switch (error.response.status) {
+                case 422:
+                    let errors = error.response.data.errors;
+
+                    for (let field in errors) {
+                        errors[field] = errors[field][0];
+                    }
+
+                    return errors;
+                case 401:
+                    alert('Your session expired, please log in again.');
+                    break;
+                case 403:
+                    alert('Action forbidden.');
+                    break;
+                default:
+                    alert('Sorry - something bad happened, but we\'re working on it!');
+                    break;
+            }
+        }
+    }
+});
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

@@ -1962,13 +1962,7 @@ __webpack_require__.r(__webpack_exports__);
         axios__WEBPACK_IMPORTED_MODULE_0___default().post('/clients', this.client).then(function (data) {
           return window.location.href = data.data.url;
         })["catch"](function (error) {
-          if (error.response.status === 422) {
-            var errors = error.response.data.errors;
-            for (var field in errors) {
-              errors[field] = errors[field][0];
-            }
-            _this.errors = errors;
-          }
+          return _this.errors = _this.processServerError(error);
         })["finally"](function () {
           return _this.isSubmitting = false;
         });
@@ -2300,13 +2294,7 @@ var emptyForm = {
           _this.$emit('close');
           _this.journal = _objectSpread({}, emptyForm);
         })["catch"](function (error) {
-          if (error.response.status === 422) {
-            var errors = error.response.data.errors;
-            for (var field in errors) {
-              errors[field] = errors[field][0];
-            }
-            _this.errors = errors;
-          }
+          return _this.errors = _this.processServerError(error);
         })["finally"](function () {
           return _this.isSubmitting = false;
         });
@@ -3059,6 +3047,29 @@ vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('clients-list', (__webpack
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('client-form', (__webpack_require__(/*! ./components/ClientForm.vue */ "./resources/js/components/ClientForm.vue")["default"]));
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('client-show', (__webpack_require__(/*! ./components/ClientShow.vue */ "./resources/js/components/ClientShow.vue")["default"]));
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('base-pagination', (__webpack_require__(/*! ./components/BasePagination.vue */ "./resources/js/components/BasePagination.vue")["default"]));
+vue__WEBPACK_IMPORTED_MODULE_0__["default"].mixin({
+  methods: {
+    processServerError: function processServerError(error) {
+      switch (error.response.status) {
+        case 422:
+          var errors = error.response.data.errors;
+          for (var field in errors) {
+            errors[field] = errors[field][0];
+          }
+          return errors;
+        case 401:
+          alert('Your session expired, please log in again.');
+          break;
+        case 403:
+          alert('Action forbidden.');
+          break;
+        default:
+          alert('Sorry - something bad happened, but we\'re working on it!');
+          break;
+      }
+    }
+  }
+});
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

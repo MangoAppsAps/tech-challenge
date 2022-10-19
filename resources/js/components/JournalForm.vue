@@ -68,17 +68,7 @@ export default {
                         this.$emit('close');
                         this.journal = {...emptyForm};
                     })
-                    .catch((error) => {
-                        if (error.response.status === 422) {
-                            let errors = error.response.data.errors;
-
-                            for (let field in errors) {
-                                errors[field] = errors[field][0];
-                            }
-
-                            this.errors = errors;
-                        }
-                    })
+                    .catch((error) => this.errors = this.processServerError(error))
                     .finally(() => this.isSubmitting = false)
             }
         }

@@ -81,17 +81,7 @@ export default {
                 this.isSubmitting = true;
                 axios.post('/clients', this.client)
                     .then((data) => window.location.href = data.data.url)
-                    .catch((error) => {
-                        if (error.response.status === 422) {
-                            let errors = error.response.data.errors;
-
-                            for (let field in errors) {
-                                errors[field] = errors[field][0];
-                            }
-
-                            this.errors = errors;
-                        }
-                    })
+                    .catch((error) => this.errors = this.processServerError(error))
                     .finally(() => this.isSubmitting = false);
             }
         }
