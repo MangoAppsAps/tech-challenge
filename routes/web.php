@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ClientBookingsController;
+use App\Http\Controllers\ClientJournalsController;
+use App\Http\Controllers\ClientsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,13 +25,16 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function () {
-    Route::get('/', 'ClientsController@index')->name('clients.index');
-    Route::get('/create', 'ClientsController@create');
-    Route::post('/', 'ClientsController@store');
-    Route::get('/{client}', 'ClientsController@show');
-    Route::delete('/{client}', 'ClientsController@destroy');
+    Route::get('/', [ClientsController::class, 'index'])->name('clients.index');
+    Route::get('/create', [ClientsController::class, 'create'])->name('clients.create');
+    Route::post('/', [ClientsController::class, 'store'])->name('clients.store');
+    Route::get('/{client}', [ClientsController::class, 'show'])->name('clients.show');
+    Route::delete('/{client}', [ClientsController::class, 'destroy'])->name('clients.destroy');
 
-    Route::get('/{client}/journals', 'JournalsController@index');
-    Route::post('/{client}/journals', 'JournalsController@store');
-    Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
+    Route::get('/{client}/bookings', [ClientBookingsController::class, 'index'])->name('clientBookings.index');
+    Route::delete('/{client}/bookings/{booking:id}', [ClientBookingsController::class, 'destroy'])->name('clientBookings.destroy');
+
+    Route::get('/{client}/journals', [ClientJournalsController::class, 'index'])->name('clientJournals.index');
+    Route::post('/{client}/journals', [ClientJournalsController::class, 'store'])->name('clientJournals.store');
+    Route::delete('/{client}/journals/{journal:id}', [ClientJournalsController::class, 'destroy'])->name('clientJournals.destroy');
 });

@@ -12,6 +12,9 @@ require('mix-tailwindcss');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
+mix.js('resources/js/app.js', 'public/js').vue({ version: 2 })
     .sass('resources/sass/app.scss', 'public/css')
     .tailwind();
+
+// mix.js('resources/js/app.js', 'public/js')
+//     .tailwind();

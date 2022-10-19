@@ -1,7 +1,7 @@
 <?php
 
-use App\User;
 use App\Client;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class ClientSeeder extends Seeder
@@ -13,10 +13,10 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        // $user = User::first() ?? factory(User::class)->create();
+        $user = User::first() ?? User::factory()->create();
 
-        factory(Client::class, 150)->create([
-            // 'user_id' => $user->id,
+        Client::factory(150)->create([
+            'user_id' => $user->id,
         ]);
     }
 }

@@ -3,49 +3,57 @@
         <h1 class="mb-6">Clients -> Add New Client</h1>
 
         <div class="max-w-lg mx-auto">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" class="form-control" v-model="client.name">
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="text" id="email" class="form-control" v-model="client.email">
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="text" id="phone" class="form-control" v-model="client.phone">
-            </div>
-            <div class="form-group">
-                <label for="name">Address</label>
-                <input type="text" id="address" class="form-control" v-model="client.address">
-            </div>
-            <div class="flex">
-                <div class="form-group flex-1">
-                    <label for="city">City</label>
-                    <input type="text" id="city" class="form-control" v-model="client.city">
+            <form @submit.prevent="submit">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <FormInput type="text" id="name" v-model="client.name" :error="errors.name"/>
                 </div>
-                <div class="form-group flex-1">
-                    <label for="postcode">Postcode</label>
-                    <input type="text" id="postcode" class="form-control" v-model="client.postcode">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <FormInput type="email" id="email" v-model="client.email" :error="errors.email"/>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <FormInput type="text" id="phone" v-model="client.phone" :error="errors.phone"/>
+                </div>
+                <div class="form-group">
+                    <label for="name">Address</label>
+                    <FormInput type="text" id="address" v-model="client.address" :error="errors.address"/>
+                </div>
+                <div class="flex">
+                    <div class="form-group flex-1">
+                        <label for="city">City</label>
+                        <FormInput type="text" id="city" v-model="client.city" :error="errors.city"/>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="postcode">Postcode</label>
+                        <FormInput type="text" id="postcode" v-model="client.postcode" :error="errors.postcode"/>
+                    </div>
+                </div>
 
-            <div class="text-right">
-                <a href="/clients" class="btn btn-default">Cancel</a>
-                <button @click="storeClient" class="btn btn-primary">Create</button>
-            </div>
+                <div class="text-right">
+                    <a href="/clients" class="btn btn-default">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import intus from 'intus';
+import FormInput from "./FormInput";
+import {isEmail, isMax, isRegex, isRequired, isRequiredWithout} from "intus/rules";
 
 export default {
     name: 'ClientForm',
+    components: {FormInput},
 
     data() {
         return {
+            isSubmitting: false,
+            errors: {},
             client: {
                 name: '',
                 email: '',
@@ -58,11 +66,23 @@ export default {
     },
 
     methods: {
-        storeClient() {
-            axios.post('/clients', this.client)
-                .then((data) => {
-                    window.location.href = data.data.url;
-                });
+        submit() {
+            if (this.isSubmitting) return;
+
+            const validation = intus.validate(this.client, {
+                name: [isRequired(), isMax(190)],
+                email: [isRequiredWithout('phone'), isEmail()],
+                phone: [isRequiredWithout('email'), isRegex(/^[+]?[ ]*[0-9 ]*$/)],
+            });
+
+            this.errors = validation.errors();
+
+            if (validation.passes()) {
+                this.isSubmitting = true;
+                axios.post('/clients', this.client)
+                    .then((data) => window.location.href = data.data.url)
+                    .finally(() => this.isSubmitting = false);
+            }
         }
     }
 }
