@@ -39,7 +39,7 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <template v-if="bookings && bookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +49,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in bookings" :key="booking.id">
                                     <td>{{ booking.start }} - {{ booking.end }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -83,15 +83,37 @@ import axios from 'axios';
 export default {
     name: 'ClientShow',
 
-    props: ['client'],
+    props: {
+        client: {
+            type: Object,
+            required: true
+        },
+    },
 
     data() {
         return {
             currentTab: 'bookings',
+            bookings: []
+        }
+    },
+
+    mounted() {
+        // Get all client bookings
+        if (this.client.bookings_count > 0) {
+            this.getClientBookings();
         }
     },
 
     methods: {
+        getClientBookings() {
+            try {
+                const response = axios.get(`${this.client.id}/bookings/`);
+            } catch(error){
+                throw new Error(error);
+            }
+
+            this.bookings = response.data;
+        },
         switchTab(newTab) {
             this.currentTab = newTab;
         },
