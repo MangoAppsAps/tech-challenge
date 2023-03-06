@@ -50,7 +50,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                    <td>{{ formatDate(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -98,6 +98,39 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+
+        /**
+         * Formats a datetime range into a more readable string
+         * 
+         * TODO: Fix the locale so that the comma is not needed and handle dates being different
+         * 
+         * @param {string} start 
+         * @param {string} end 
+         */
+        formatDate(start, end) {
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+
+            const date = startDate.toLocaleDateString('en-GB', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',                
+            });
+
+            const startTime = startDate.toLocaleDateString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+
+            const endTime = endDate.toLocaleDateString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+
+            // TODO: Find locale that doesn't require removing the comma manually
+            return `${date.replace(",", "")}, ${startTime} to ${endTime}`;
         }
     }
 }
