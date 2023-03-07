@@ -33,7 +33,7 @@ Complete as many as you can. If you got some time left, there's BONUS tasks, but
   - The `phone` can only contain digits, spaces and a plus sign
   - At least one of (phone/email) is required
 - [x] (FEATURE) The client bookings are currently displayed in random order. Please display them in chronological order, newest first.
-- [ ] (FEATURE) Users want a quick way to see future and past bookings. When viewing client bookings, can you make a dropdown with three values - "All bookings", "Future bookings only" and "Past bookings only". Make it so that selecting an item from the dropdown would only show bookings that apply to the selected filter. When the page loads, default to "All bookings".
+- [x] (FEATURE) Users want a quick way to see future and past bookings. When viewing client bookings, can you make a dropdown with three values - "All bookings", "Future bookings only" and "Past bookings only". Make it so that selecting an item from the dropdown would only show bookings that apply to the selected filter. When the page loads, default to "All bookings".
 
 **BONUS TASKS!**
 

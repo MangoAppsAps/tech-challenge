@@ -34,6 +34,14 @@
                     <button class="btn" :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
                     <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
                 </div>
+                <!-- Select bookings to be shown -->
+                <div>
+                    <select class="form-select" v-model="selectedBookings">
+                        <option value="all" default>All bookings</option>
+                        <option value="upcoming">Future bookings only</option>
+                        <option value="past">Past bookings only</option>
+                    </select>
+                </div>
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
@@ -49,7 +57,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in bookings" :key="booking.id">
+                                <tr v-for="booking in sortBookings(bookings)" :key="booking.id">
                                     <td>{{ formatDate(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,12 +96,20 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
-            bookings: [...this.client.bookings].sort(function (a, b) {
-                const aDate = new Date(a.start);
-                const bDate = new Date(b.start);
+            bookings: this.client.bookings,
+            selectedBookings: 'all',
+        }
+    },
 
-                return bDate.getTime() - aDate.getTime(); // Sort by date descending
-            })
+    watch: {
+        selectedBookings: function(val) {
+            if (val == 'upcoming') {
+                this.bookings = this.client.bookings.filter(booking => new Date(booking.start) > new Date());
+            } else if (val == 'past') {
+                this.bookings = this.client.bookings.filter(booking => new Date(booking.start) < new Date());
+            } else {
+                this.bookings = this.client.bookings;
+            }
         }
     },
 
@@ -137,6 +153,15 @@ export default {
 
             // TODO: Find locale that doesn't require removing the comma manually
             return `${date.replace(",", "")}, ${startTime} to ${endTime}`;
+        },
+
+        sortBookings(bookings) {
+            return [...bookings].sort(function (a, b) {
+                const aDate = new Date(a.start);
+                const bDate = new Date(b.start);
+
+                return bDate.getTime() - aDate.getTime(); // Sort by date descending
+            });
         }
     }
 }
