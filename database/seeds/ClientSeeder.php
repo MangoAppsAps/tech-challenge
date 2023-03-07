@@ -13,10 +13,11 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        // $user = User::first() ?? factory(User::class)->create();
+        // Get first user or create one (if none exist)
+        $user = User::first() ?? factory(User::class)->create();
 
         factory(Client::class, 150)->create([
-            // 'user_id' => $user->id,
+            'user_id' => $user->id,
         ]);
     }
 }
