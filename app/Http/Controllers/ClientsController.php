@@ -9,11 +9,7 @@ class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = auth()->user()->clients;
-
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
+        $clients = auth()->user()->clients()->withCount('bookings')->get();
 
         return view('clients.index', ['clients' => $clients]);
     }
@@ -32,7 +28,8 @@ class ClientsController extends Controller
         return view('clients.show', ['client' => $client]);
     }
 
-    public function filterBookings(Request $request, Client $client) {
+    public function filterBookings(Request $request, Client $client)
+    {
         return $client->bookings()
                 ->when($request->filter == 'future', fn($q) => $q->where('start', '>', now()))
                 ->when($request->filter == 'past', fn($q) => $q->where('start', '<', now()))
