@@ -32,6 +32,14 @@ class ClientsController extends Controller
         return view('clients.show', ['client' => $client]);
     }
 
+    public function filterBookings(Request $request, Client $client) {
+        return $client->bookings()
+                ->when($request->filter == 'future', fn($q) => $q->where('start', '>', now()))
+                ->when($request->filter == 'past', fn($q) => $q->where('start', '<', now()))
+                ->orderBy('start', 'DESC')
+                ->get();
+    }
+
     public function store(Request $request)
     {
         $request->validate([

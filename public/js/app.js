@@ -2087,13 +2087,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientShow',
-  props: ['client'],
+  props: ['clientData'],
   data: function data() {
     return {
-      currentTab: 'bookings'
+      client: this.clientData,
+      // For save mutating.
+      currentTab: 'bookings',
+      filter: 'all',
+      isLoading: false
     };
   },
   methods: {
@@ -2102,6 +2115,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteBooking: function deleteBooking(booking) {
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
+    }
+  },
+  watch: {
+    filter: function filter(newVal, oldVal) {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/clients/".concat(this.client.id, "/bookings?filter=").concat(newVal)).then(function (res) {
+        _this.client.bookings = res.data;
+      });
     }
   }
 });
@@ -38197,9 +38219,60 @@ var render = function() {
               "div",
               { staticClass: "bg-white rounded p-4" },
               [
-                _c("h3", { staticClass: "mb-3" }, [
-                  _vm._v("List of client bookings")
-                ]),
+                _c(
+                  "div",
+                  { staticClass: "flex items-center justify-between" },
+                  [
+                    _c("h3", { staticClass: "mb-3" }, [
+                      _vm._v("List of client bookings")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.filter,
+                              expression: "filter"
+                            }
+                          ],
+                          staticClass: "form-control disabled:opacity-5",
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.filter = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "all" } }, [
+                            _vm._v("All bookings")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "future" } }, [
+                            _vm._v("Future bookings only")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "past" } }, [
+                            _vm._v("Past bookings only")
+                          ])
+                        ]
+                      )
+                    ])
+                  ]
+                ),
                 _vm._v(" "),
                 _vm.client.bookings && _vm.client.bookings.length > 0
                   ? [

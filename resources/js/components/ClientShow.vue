@@ -37,7 +37,16 @@
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
-                    <h3 class="mb-3">List of client bookings</h3>
+                    <div class="flex items-center justify-between">
+                        <h3 class="mb-3">List of client bookings</h3>
+                        <div>
+                            <select class="form-control disabled:opacity-5" v-model="filter">
+                                <option value="all">All bookings</option>
+                                <option value="future">Future bookings only</option>
+                                <option value="past">Past bookings only</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
@@ -83,11 +92,14 @@ import axios from 'axios';
 export default {
     name: 'ClientShow',
 
-    props: ['client'],
+    props: ['clientData'],
 
     data() {
         return {
+            client: this.clientData, // For save mutating.
             currentTab: 'bookings',
+            filter: 'all',
+            isLoading: false,
         }
     },
 
@@ -98,6 +110,14 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        }
+    },
+
+    watch: {
+        filter(newVal, oldVal) {
+            axios.get(`/clients/${this.client.id}/bookings?filter=${newVal}`).then(res => {
+                this.client.bookings = res.data
+            });
         }
     }
 }
