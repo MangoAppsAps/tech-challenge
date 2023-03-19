@@ -18,10 +18,10 @@ Welcome to the EasyPractice tech challenge! Below you'll find a list of tasks to
 Complete as many as you can. If you got some time left, there's BONUS tasks, but they're not required ;)
 
 **Solve this first:**
-- [ ] (BUG) I created some seeders that you can run with `php artisan db:seed`, but it gives an error. Can you make it work?
+- [x] (BUG) I created some seeders that you can run with `php artisan db:seed`, but it gives an error. Can you make it work?
 
 **And these in any order:**
-- [ ] (BUG) For some reason, the client bookings are not showing up in the front-end. Can you fix that?
+- [x] (BUG) For some reason, the client bookings are not showing up in the front-end. Can you fix that?
 - [ ] (BUG) The list of bookings displayed on a client page has unformatted dates. Can you make sure they look something like this: `Monday 19 January 2020, 14:00 to 15:00`
 - [ ] (FEATURE) Currently, any logged-in user can view all of the system's clients, including those created by other users. Users are obviously not happy with that. Can you make it so that a single Client only belongs to one User?
 - [ ] (BUG) When trying to delete a client, the front-end does not update. Can you improve the experience, so the user knows the client was actually deleted? (tip: use `php artisan db:seed --class=ClientSeeder` to generate some clients if you have none)
