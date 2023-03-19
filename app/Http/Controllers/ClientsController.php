@@ -19,11 +19,14 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::where('id', $client)
-            ->with('bookings', fn ($q) => $q->orderBy('start', 'DESC'))
-            ->first();
+        $this->authorize('view', $client);
+
+        $client->load([
+            'bookings' => fn ($q) => $q->orderBy('start', 'DESC')
+        ]);
+
 
         return view('clients.show', ['client' => $client]);
     }
@@ -31,10 +34,10 @@ class ClientsController extends Controller
     public function filterBookings(Request $request, Client $client)
     {
         return $client->bookings()
-                ->when($request->filter == 'future', fn($q) => $q->where('start', '>', now()))
-                ->when($request->filter == 'past', fn($q) => $q->where('start', '<', now()))
-                ->orderBy('start', 'DESC')
-                ->get();
+            ->when($request->filter == 'future', fn ($q) => $q->where('start', '>', now()))
+            ->when($request->filter == 'past', fn ($q) => $q->where('start', '<', now()))
+            ->orderBy('start', 'DESC')
+            ->get();
     }
 
     public function store(Request $request)
@@ -58,9 +61,11 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
+        $this->authorize('delete', $client);
+
+        $client->delete();
 
         return 'Deleted';
     }
