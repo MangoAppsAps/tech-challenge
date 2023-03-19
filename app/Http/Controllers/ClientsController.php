@@ -49,7 +49,7 @@ class ClientsController extends Controller
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
-        $client->address = $request->get('adress');
+        $client->address = $request->get('address');
         $client->city = $request->get('city');
         $client->postcode = $request->get('postcode');
         $client->user_id = auth()->id();
