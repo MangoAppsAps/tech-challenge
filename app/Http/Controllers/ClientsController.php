@@ -25,7 +25,9 @@ class ClientsController extends Controller
 
     public function show($client)
     {
-        $client = Client::where('id', $client)->with('bookings')->first();
+        $client = Client::where('id', $client)
+            ->with('bookings', fn ($q) => $q->orderBy('start', 'DESC'))
+            ->first();
 
         return view('clients.show', ['client' => $client]);
     }
@@ -37,7 +39,7 @@ class ClientsController extends Controller
             'email' => 'required_without:phone|nullable|email:rfc,dns',
             'phone' => 'required_without:email|nullable|regex:/^\+?[0-9\s]+$/',
         ]);
-        
+
         $client = new Client;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
