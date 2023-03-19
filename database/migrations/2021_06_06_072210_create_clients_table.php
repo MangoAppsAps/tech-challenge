@@ -21,6 +21,7 @@ class CreateClientsTable extends Migration
             $table->string('address')->nullable();
             $table->string('city')->nullable();
             $table->string('postcode')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
