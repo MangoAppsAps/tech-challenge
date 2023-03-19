@@ -2,6 +2,6 @@
 
 @section('content')
 <div class="container">
-    <clients-list :clients='@json($clients)'></clients-list>
+    <clients-list :clients-data='@json($clients)'></clients-list>
 </div>
 @endsection

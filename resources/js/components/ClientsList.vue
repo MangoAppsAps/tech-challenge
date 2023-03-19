@@ -37,11 +37,19 @@ import axios from 'axios';
 export default {
     name: 'ClientsList',
 
-    props: ['clients'],
+    props: ['clientsData'],
+
+    data() {
+        return {
+            clients: this.clientsData, // For safe mutation
+        }
+    },
 
     methods: {
         deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+            axios.delete(`/clients/${client.id}`).then(() => {
+                this.clients = this.clients.filter((c) => c.id != client.id);
+            });
         }
     }
 }
