@@ -17,4 +17,10 @@ class Booking extends Model
         'start',
         'end',
     ];
+
+    protected $appends = ['formatted_date'];
+
+    public function getFormattedDateAttribute() {
+        return $this->start->format('l d F Y, H:i') . ' to ' . $this->end->format('H:i');
+    }
 }

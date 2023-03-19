@@ -22,7 +22,7 @@ Complete as many as you can. If you got some time left, there's BONUS tasks, but
 
 **And these in any order:**
 - [x] (BUG) For some reason, the client bookings are not showing up in the front-end. Can you fix that?
-- [ ] (BUG) The list of bookings displayed on a client page has unformatted dates. Can you make sure they look something like this: `Monday 19 January 2020, 14:00 to 15:00`
+- [x] (BUG) The list of bookings displayed on a client page has unformatted dates. Can you make sure they look something like this: `Monday 19 January 2020, 14:00 to 15:00`
 - [ ] (FEATURE) Currently, any logged-in user can view all of the system's clients, including those created by other users. Users are obviously not happy with that. Can you make it so that a single Client only belongs to one User?
 - [ ] (BUG) When trying to delete a client, the front-end does not update. Can you improve the experience, so the user knows the client was actually deleted? (tip: use `php artisan db:seed --class=ClientSeeder` to generate some clients if you have none)
 - [ ] (FEATURE) We noticed users started entering random data when creating clients. We should include some validation. Make sure that, when creating a client:
