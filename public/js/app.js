@@ -1950,6 +1950,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientForm',
@@ -1962,13 +1969,18 @@ __webpack_require__.r(__webpack_exports__);
         address: '',
         city: '',
         postcode: ''
-      }
+      },
+      errors: null
     };
   },
   methods: {
     storeClient: function storeClient() {
+      var _this = this;
+
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client).then(function (data) {
         window.location.href = data.data.url;
+      })["catch"](function (e) {
+        _this.errors = e.response.data.errors;
       });
     }
   }
@@ -59582,6 +59594,30 @@ var render = function() {
     _c("h1", { staticClass: "mb-6" }, [_vm._v("Clients -> Add New Client")]),
     _vm._v(" "),
     _c("div", { staticClass: "max-w-lg mx-auto" }, [
+      _vm.errors
+        ? _c(
+            "div",
+            { staticClass: "bg-red-500 text-white py-2 px-4 rounded mb-4" },
+            _vm._l(_vm.errors, function(v, k) {
+              return _c(
+                "div",
+                { key: k },
+                _vm._l(v, function(error) {
+                  return _c("p", { key: error }, [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(error) +
+                        "\n                "
+                    )
+                  ])
+                }),
+                0
+              )
+            }),
+            0
+          )
+        : _vm._e(),
+      _vm._v(" "),
       _c("div", { staticClass: "form-group" }, [
         _c("label", { attrs: { for: "name" } }, [_vm._v("Name")]),
         _vm._v(" "),

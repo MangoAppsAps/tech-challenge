@@ -1,8 +1,15 @@
 <template>
     <div>
         <h1 class="mb-6">Clients -> Add New Client</h1>
-
         <div class="max-w-lg mx-auto">
+            <div v-if="errors" class="bg-red-500 text-white py-2 px-4 rounded mb-4">
+                <div v-for="(v, k) in errors" :key="k">
+                    <p v-for="error in v" :key="error">
+                        {{ error }}
+                    </p>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" class="form-control" v-model="client.name">
@@ -53,7 +60,8 @@ export default {
                 address: '',
                 city: '',
                 postcode: '',
-            }
+            },
+            errors: null,
         }
     },
 
@@ -62,6 +70,9 @@ export default {
             axios.post('/clients', this.client)
                 .then((data) => {
                     window.location.href = data.data.url;
+                })
+                .catch(e => {
+                    this.errors = e.response.data.errors;
                 });
         }
     }
