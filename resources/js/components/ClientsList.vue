@@ -42,6 +42,9 @@ export default {
     methods: {
         deleteClient(client) {
             axios.delete(`/clients/${client.id}`);
+            this.clients = $.grep(this.clients, function(c) {
+                return c.id != client.id;
+            });
         }
     }
 }
