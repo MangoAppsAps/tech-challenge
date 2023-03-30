@@ -39,7 +39,13 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <select v-model="selectedBookingsFilter" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5 mb-4">
+                        <option v-for="(text, value) in bookingsFilterOptions" :value="value">
+                          {{ text }}
+                        </option>
+                    </select>
+
+                    <template v-if="filteredBookings && filteredBookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +55,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in filteredBookings" :key="booking.id">
                                     <td>{{ booking | getBookingDisplayTime }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -87,15 +93,45 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            bookingsFilterOptions: {
+                all: 'All bookings',
+                future: 'Future bookings only',
+                past: 'Past bookings only',
+            },
+            selectedBookingsFilter: 'all',
+            filteredBookings: null,
+        }
+    },
+    mounted() {
+        this.filterBookings();
+    },
+    watch: {
+        selectedBookingsFilter() {
+            this.filterBookings();
         }
     },
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;
         },
-
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+        filterBookings() {
+            let now = moment().valueOf();
+            if (this.selectedBookingsFilter == 'future') {
+                this.filteredBookings = this.client.bookings.filter(b => {
+                    return (now <= moment(b.start).valueOf());
+                })
+                return;
+            }
+            if (this.selectedBookingsFilter == 'past') {
+                this.filteredBookings = this.client.bookings.filter(b => {
+                    return (now > moment(b.end).valueOf());
+                })
+                return;
+            }
+            this.filteredBookings = this.client.bookings;
         }
     },
     filters: {
