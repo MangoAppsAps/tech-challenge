@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\User;
 use App\Http\Requests\StoreClient;
+use Illuminate\Support\Facades\Auth;
 
 class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+
+        $clients = User::find(Auth::id())->clients;
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
@@ -37,6 +40,7 @@ class ClientsController extends Controller
             $request->all(),
             $request->validated(),
         );
+        $data['user_id'] = Auth::id();
 
         return Client::create($data);
     }
