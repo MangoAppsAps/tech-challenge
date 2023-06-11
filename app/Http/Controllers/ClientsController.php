@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 
 class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $clients = Client::where('created_by', '=', auth()->id())->get();
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
@@ -25,7 +26,14 @@ class ClientsController extends Controller
 
     public function show($client)
     {
-        $client = Client::where('id', $client)->with('bookings')->first();
+        $client = Client::where('id', $client)
+            ->where('created_by', '=', auth()->id())
+            ->with('bookings')
+            ->first();
+
+        if ($client === null) {
+            throw new AuthorizationException();
+        }
 
         return view('clients.show', ['client' => $client]);
     }
@@ -33,6 +41,7 @@ class ClientsController extends Controller
     public function store(Request $request)
     {
         $client = new Client;
+        $client->created_by = auth()->id();
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
@@ -46,7 +55,15 @@ class ClientsController extends Controller
 
     public function destroy($client)
     {
-        Client::where('id', $client)->delete();
+        $client = Client::where('id', $client)
+            ->where('created_by', '=', auth()->id())
+            ->first();
+
+        if ($client === null) {
+            throw new AuthorizationException();
+        }
+
+        $client->delete();
 
         return 'Deleted';
     }

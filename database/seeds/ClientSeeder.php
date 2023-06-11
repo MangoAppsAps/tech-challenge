@@ -13,10 +13,14 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        // $user = User::first() ?? factory(User::class)->create();
+        for ($i = 0; $i < 10; $i++) {
+            // We could pick an existing user at random. But, for now, let's leave them as is, so we have users with
+            // zero clients as well.
+            $user = factory(User::class)->create();
 
-        factory(Client::class, 150)->create([
-            // 'user_id' => $user->id,
-        ]);
+            factory(Client::class, 10)->create([
+                'created_by' => $user->id,
+            ]);
+        }
     }
 }
