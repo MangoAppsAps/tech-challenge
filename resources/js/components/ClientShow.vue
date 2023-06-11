@@ -37,9 +37,21 @@
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
-                    <h3 class="mb-3">List of client bookings</h3>
+                    <div class="flex">
+                        <div>
+                            <h3 class="mb-3">List of client bookings</h3>
+                        </div>
+                        <div class="flex-grow"></div>
+                        <div>
+                            <select v-model="selectedFilter">
+                                <option value="all">All bookings</option>
+                                <option value="future">Future bookings only</option>
+                                <option value="past">Past bookings only</option>
+                            </select>
+                        </div>
+                    </div>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <template v-if="bookingsMatchingCurrentFilter && bookingsMatchingCurrentFilter.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +61,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in bookingsMatchingCurrentFilter" :key="booking.id">
                                     <td>{{ formatStartEndDate(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,7 +100,25 @@ export default {
 
     data() {
         return {
+            selectedFilter: 'all',
             currentTab: 'bookings',
+        }
+    },
+
+    computed: {
+        bookingsMatchingCurrentFilter() {
+            switch (this.selectedFilter) {
+                case 'all':
+                    return this.client.bookings;
+                case 'future':
+                    return this.client.bookings.filter((item) => {
+                        return moment(item.start).isSameOrAfter(moment())
+                    });
+                case 'past':
+                    return this.client.bookings.filter((item) => {
+                        return moment(item.start).isBefore(moment())
+                    });
+            }
         }
     },
 
