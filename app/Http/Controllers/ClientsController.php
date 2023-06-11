@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 
 class ClientsController extends Controller
@@ -28,7 +29,9 @@ class ClientsController extends Controller
     {
         $client = Client::where('id', $client)
             ->where('created_by', '=', auth()->id())
-            ->with('bookings')
+            ->with('bookings', function(HasMany $innerQuery) {
+                $innerQuery->orderBy('start', 'desc');
+            })
             ->first();
 
         if ($client === null) {
