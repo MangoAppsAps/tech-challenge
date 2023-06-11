@@ -5,15 +5,18 @@
         <div class="max-w-lg mx-auto">
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" id="name" class="form-control" v-model="client.name">
+                <input type="text" id="name" name="name" class="form-control" v-model="client.name" v-validate="'required|max:190'">
+                <span v-show="errors.has('name')" class="text-red-800">{{ errors.first('name') }}</span>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="text" id="email" class="form-control" v-model="client.email">
+                <input type="text" id="email" name="email" class="form-control" v-model="client.email" v-validate="client.phone ? 'email' : 'required|email'">
+                <span v-show="errors.has('email')" class="text-red-800">{{ errors.first('email') }}</span>
             </div>
             <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="text" id="phone" class="form-control" v-model="client.phone">
+                <input type="text" id="phone" name="phone" class="form-control" v-model="client.phone" v-validate="{ required: !client.email, regex: /^\+?[0-9\s]+$/ }">
+                <span v-show="errors.has('phone')" class="text-red-800">{{ errors.first('phone') }}</span>
             </div>
             <div class="form-group">
                 <label for="name">Address</label>
@@ -59,10 +62,14 @@ export default {
 
     methods: {
         storeClient() {
-            axios.post('/clients', this.client)
-                .then((data) => {
-                    window.location.href = data.data.url;
-                });
+            this.$validator.validate().then(valid => {
+                if (valid) {
+                    axios.post('/clients', this.client)
+                        .then((data) => {
+                            window.location.href = data.data.url;
+                        });
+                }
+            });
         }
     }
 }

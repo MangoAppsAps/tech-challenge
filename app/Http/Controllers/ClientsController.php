@@ -40,6 +40,12 @@ class ClientsController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|max:190',
+            'email' => 'required_without:phone|email',
+            'phone' => 'required_without:email|nullable|regex:/^\+?[0-9\s]+$/',
+        ]);
+
         $client = new Client;
         $client->created_by = auth()->id();
         $client->name = $request->get('name');
