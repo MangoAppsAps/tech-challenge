@@ -50,7 +50,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                    <td>{{ formatStartEndDate(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -79,6 +79,7 @@
 
 <script>
 import axios from 'axios';
+import moment from 'moment';
 
 export default {
     name: 'ClientShow',
@@ -98,6 +99,23 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+
+        formatStartEndDate(startDateString, endDateString) {
+            // Note that we could do "moment(...)" here and omit the "parseZone" to get the date strings in local time.
+            const startDate = moment.parseZone(startDateString);
+            const endDate = moment.parseZone(endDateString);
+
+            // If the booking starts and ends on the same day, we can display a shorter formatted string.
+            // Otherwise, we need to include the full date for both the start and end.
+            let formattedString = null;
+            if (startDate.isSame(endDate, 'day')) {
+                formattedString = startDate.format('dddd DD MMMM YYYY, HH:mm') + ' to ' + endDate.format('HH:mm');
+            } else {
+                formattedString = startDate.format('dddd DD MMMM YYYY HH:mm') + ' to ' + endDate.format('dddd DD MMMM YYYY HH:mm');
+            }
+
+            return formattedString;
         }
     }
 }
