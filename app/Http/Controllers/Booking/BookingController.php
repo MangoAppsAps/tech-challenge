@@ -13,6 +13,8 @@ class BookingController extends Controller
 {
     public function index(Client $client): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', [Booking::class, $client]);
+
         return BookingResource::collection(
             $client->bookings
         );

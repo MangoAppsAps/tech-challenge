@@ -11,6 +11,11 @@ class BookingPolicy
 {
     use HandlesAuthorization;
 
+    public function viewAny(User $user, Client $client): bool
+    {
+        return $user->id === $client->user_id;
+    }
+
     public function destroy(User $user, Booking $booking, Client $client): bool
     {
         return $client->id === $booking->client_id &&

@@ -14,6 +14,8 @@ class JournalsController extends Controller
 {
     public function index(Client $client): AnonymousResourceCollection
     {
+        $this->authorize('viewAny', [Journal::class, $client]);
+
         return JournalResource::collection(
             $client->journals
         );
