@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 class ClientsController extends Controller
 {
-    public function index()
+    public function index(Request $request): View
     {
-        $clients = Client::all();
+        $clients = Client::where('user_id', $request->user()->id)->get();
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
@@ -23,14 +25,19 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show(Client $client)
+    public function show(Request $request, Client $client): View
     {
+        if ($client->user_id !== $request->user()->id) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
         return view('clients.show', ['client' => $client->load('bookings')]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): Client
     {
         $client = new Client;
+        $client->user_id = $request->user()->id;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
