@@ -39,6 +39,14 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
+                    <div class="pt-2 pb-4">
+                        <select v-model="bookingFilter">
+                            <option value="all">All bookings</option>
+                            <option value="past">Past bookings only</option>
+                            <option value="future">Future bookings only</option>
+                        </select>
+                    </div>
+
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
@@ -49,7 +57,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in bookings()" :key="booking.id">
                                     <td>{{ formatInterval(booking) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,12 +96,25 @@ export default {
 
     data() {
         return {
-            bookings: this.client.bookings.sort((a, b) => new Date(b.start) - new Date(a.start)),
+            bookingFilter: 'all',
             currentTab: 'bookings',
         }
     },
 
     methods: {
+        bookings() {
+            const bookings = this.client.bookings.sort((a, b) => new Date(b.start) - new Date(a.start));
+
+            switch (this.bookingFilter) {
+                case 'past':
+                    return bookings.filter(booking => moment.parseZone(booking.start).isBefore(moment()));
+                case 'future':
+                    return bookings.filter(booking => moment.parseZone(booking.start).isAfter(moment()));
+                default:
+                    return bookings;
+            }
+        },
+
         switchTab(newTab) {
             this.currentTab = newTab;
         },
