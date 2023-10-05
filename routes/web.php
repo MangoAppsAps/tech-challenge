@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Booking\BookingController;
+use App\Http\Controllers\Client\ClientsController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Journal\JournalsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,16 +23,24 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function () {
-    Route::get('/', 'ClientsController@index')->name('clients.index');
-    Route::get('/create', 'ClientsController@create');
-    Route::post('/', 'ClientsController@store');
-    Route::get('/{client}', 'ClientsController@show');
-    Route::delete('/{client}', 'ClientsController@destroy');
+    Route::as('clients.')->group(function () {
+        Route::get('/', [ClientsController::class, 'index'])->name('index');
+        Route::view('/create', 'clients.create')->name('create');
+        Route::post('/', [ClientsController::class, 'store'])->name('store');
+        Route::get('/{client}', [ClientsController::class, 'show'])->name('show');
+        Route::delete('/{client}', [ClientsController::class, 'destroy'])->name('destroy');
+    });
 
-    Route::get('/{client}/journals', 'JournalsController@index');
-    Route::post('/{client}/journals', 'JournalsController@store');
-    Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
+    Route::prefix('/{client}/journals')->as('journals.')->group(function () {
+        Route::get('/', [JournalsController::class, 'index'])->name('index');
+        Route::post('/', [JournalsController::class, 'store'])->name('store');
+        Route::delete('/{journal}', [JournalsController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('/{client}/bookings')->as('bookings.')->group(function () {
+        Route::delete('/{booking}', [BookingController::class, 'destroy'])->name('destroy');
+    });
 });

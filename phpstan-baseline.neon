@@ -1,0 +1,191 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Property App\\\\Console\\\\Kernel\\:\\:\\$commands type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Console/Kernel.php
+
+		-
+			message: "#^PHPDoc type array of property App\\\\Exceptions\\\\Handler\\:\\:\\$dontFlash is not covariant with PHPDoc type array\\<string\\> of overridden property Illuminate\\\\Foundation\\\\Exceptions\\\\Handler\\:\\:\\$dontFlash\\.$#"
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: "#^PHPDoc type array of property App\\\\Exceptions\\\\Handler\\:\\:\\$dontReport is not covariant with PHPDoc type array\\<string\\> of overridden property Illuminate\\\\Foundation\\\\Exceptions\\\\Handler\\:\\:\\$dontReport\\.$#"
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: "#^Property App\\\\Exceptions\\\\Handler\\:\\:\\$dontFlash type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: "#^Property App\\\\Exceptions\\\\Handler\\:\\:\\$dontReport type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: "#^Call to an undefined static method App\\\\User\\:\\:create\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Auth/RegisterController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController\\:\\:create\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Controllers/Auth/RegisterController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Auth\\\\RegisterController\\:\\:validator\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Controllers/Auth/RegisterController.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Contracts\\\\Routing\\\\ResponseFactory\\|Illuminate\\\\Http\\\\Response\\:\\:json\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Booking/BookingController.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Contracts\\\\Routing\\\\ResponseFactory\\|Illuminate\\\\Http\\\\Response\\:\\:json\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Client/ClientsController.php
+
+		-
+			message: "#^Call to an undefined static method App\\\\Client\\:\\:create\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Client/ClientsController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Client\\\\ClientsController\\:\\:index\\(\\) should return Illuminate\\\\Contracts\\\\View\\\\View but returns Illuminate\\\\Contracts\\\\View\\\\Factory\\|Illuminate\\\\Contracts\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/Client/ClientsController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\Client\\\\ClientsController\\:\\:show\\(\\) should return Illuminate\\\\Contracts\\\\View\\\\View but returns Illuminate\\\\Contracts\\\\View\\\\Factory\\|Illuminate\\\\Contracts\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/Client/ClientsController.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Controllers\\\\HomeController\\:\\:index\\(\\) should return Illuminate\\\\Contracts\\\\Support\\\\Renderable but returns Illuminate\\\\Contracts\\\\View\\\\Factory\\|Illuminate\\\\Contracts\\\\View\\\\View\\.$#"
+			count: 1
+			path: app/Http/Controllers/HomeController.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Client\\:\\:\\$journals\\.$#"
+			count: 1
+			path: app/Http/Controllers/Journal/JournalsController.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Contracts\\\\Routing\\\\ResponseFactory\\|Illuminate\\\\Http\\\\Response\\:\\:json\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Journal/JournalsController.php
+
+		-
+			message: "#^Call to an undefined static method App\\\\Journal\\:\\:create\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Journal/JournalsController.php
+
+		-
+			message: "#^Property App\\\\Http\\\\Kernel\\:\\:\\$middleware type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: "#^Property App\\\\Http\\\\Kernel\\:\\:\\$middlewareGroups type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: "#^Property App\\\\Http\\\\Kernel\\:\\:\\$routeMiddleware type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Middleware\\\\Authenticate\\:\\:redirectTo\\(\\) should return string\\|null but return statement is missing\\.$#"
+			count: 1
+			path: app/Http/Middleware/Authenticate.php
+
+		-
+			message: "#^Property App\\\\Http\\\\Middleware\\\\CheckForMaintenanceMode\\:\\:\\$except type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Middleware/CheckForMaintenanceMode.php
+
+		-
+			message: "#^Property App\\\\Http\\\\Middleware\\\\EncryptCookies\\:\\:\\$except type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Middleware/EncryptCookies.php
+
+		-
+			message: "#^Property App\\\\Http\\\\Middleware\\\\TrimStrings\\:\\:\\$except type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Middleware/TrimStrings.php
+
+		-
+			message: "#^Method App\\\\Http\\\\Middleware\\\\TrustHosts\\:\\:hosts\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Middleware/TrustHosts.php
+
+		-
+			message: "#^Property App\\\\Http\\\\Middleware\\\\TrustProxies\\:\\:\\$proxies type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Middleware/TrustProxies.php
+
+		-
+			message: "#^Property App\\\\Http\\\\Middleware\\\\VerifyCsrfToken\\:\\:\\$except type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Http/Middleware/VerifyCsrfToken.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Booking\\:\\:\\$client\\.$#"
+			count: 1
+			path: app/Policies/BookingPolicy.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Booking\\:\\:\\$client_id\\.$#"
+			count: 1
+			path: app/Policies/BookingPolicy.php
+
+		-
+			message: "#^Access to an undefined property App\\\\User\\:\\:\\$id\\.$#"
+			count: 1
+			path: app/Policies/BookingPolicy.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Client\\:\\:\\$user_id\\.$#"
+			count: 2
+			path: app/Policies/ClientPolicy.php
+
+		-
+			message: "#^Access to an undefined property App\\\\User\\:\\:\\$id\\.$#"
+			count: 2
+			path: app/Policies/ClientPolicy.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Client\\:\\:\\$user_id\\.$#"
+			count: 1
+			path: app/Policies/JournalPolicy.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Journal\\:\\:\\$client\\.$#"
+			count: 1
+			path: app/Policies/JournalPolicy.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Journal\\:\\:\\$client_id\\.$#"
+			count: 1
+			path: app/Policies/JournalPolicy.php
+
+		-
+			message: "#^Access to an undefined property App\\\\User\\:\\:\\$id\\.$#"
+			count: 2
+			path: app/Policies/JournalPolicy.php
+
+		-
+			message: "#^Property App\\\\Providers\\\\AuthServiceProvider\\:\\:\\$policies type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Providers/AuthServiceProvider.php
+
+		-
+			message: "#^Property App\\\\Providers\\\\EventServiceProvider\\:\\:\\$listen type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: app/Providers/EventServiceProvider.php

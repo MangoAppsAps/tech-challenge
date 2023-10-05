@@ -1979,7 +1979,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.errors = null;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client).then(function (data) {
-        window.location.href = data.data.url;
+        window.location.href = data.data.data.url;
       })["catch"](function (error) {
         if (error.response.status === 422) {
           _this.errors = Object.entries(error.response.data.errors);
@@ -2134,7 +2134,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2144,6 +2143,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       bookingFilter: 'all',
       currentTab: 'bookings',
+      bookings: this.client.bookings,
       journals: [],
       journalsInitialized: false,
       addJournalVisible: false,
@@ -2154,20 +2154,20 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    bookings: function bookings() {
+    filterBookings: function filterBookings() {
       switch (this.bookingFilter) {
         case 'past':
-          return this.client.bookings.filter(function (booking) {
+          return this.bookings.filter(function (booking) {
             return moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(booking.start).isBefore(moment__WEBPACK_IMPORTED_MODULE_1___default()());
           });
 
         case 'future':
-          return this.client.bookings.filter(function (booking) {
+          return this.bookings.filter(function (booking) {
             return moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(booking.start).isAfter(moment__WEBPACK_IMPORTED_MODULE_1___default()());
           });
 
         default:
-          return this.client.bookings;
+          return this.bookings;
       }
     },
     switchTab: function switchTab(newTab) {
@@ -2178,7 +2178,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     deleteBooking: function deleteBooking(booking) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(this.client.id, "/bookings/").concat(booking.id)).then(function () {
+        _this.bookings.splice(_this.bookings.indexOf(booking), 1);
+      });
     },
     formatBookingInterval: function formatBookingInterval(booking) {
       var start = moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(booking.start);
@@ -2195,35 +2199,33 @@ __webpack_require__.r(__webpack_exports__);
       return moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(journal.date).format('dddd D MMMM YYYY');
     },
     getClientJournals: function getClientJournals(client) {
-      var _this = this;
+      var _this2 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/clients/".concat(client.id, "/journals")).then(function (response) {
-        _this.journals = response.data.data.sort(function (a, b) {
-          return new Date(b.date) - new Date(a.date);
-        });
+        _this2.journals = response.data.data;
       })["finally"](function () {
-        _this.journalsInitialized = true;
+        _this2.journalsInitialized = true;
       });
     },
     storeJournal: function storeJournal() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/clients/".concat(this.client.id, "/journals"), this.journal).then(function (response) {
-        _this2.journals.push(response.data.data);
+        _this3.journals.push(response.data.data);
 
-        _this2.addJournalVisible = false;
+        _this3.addJournalVisible = false;
       })["finally"](function () {
-        _this2.journal = {
+        _this3.journal = {
           date: moment__WEBPACK_IMPORTED_MODULE_1___default()().format('YYYY-MM-DD'),
           text: ''
         };
       });
     },
     deleteJournal: function deleteJournal(journal) {
-      var _this3 = this;
+      var _this4 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(this.client.id, "/journals/").concat(journal.id)).then(function () {
-        _this3.journals.splice(_this3.journals.indexOf(journal), 1);
+        _this4.journals.splice(_this4.journals.indexOf(journal), 1);
       });
     }
   }
@@ -59722,7 +59724,7 @@ var render = function() {
     _c("h1", { staticClass: "mb-6" }, [_vm._v("Clients -> Add New Client")]),
     _vm._v(" "),
     _c("div", { staticClass: "max-w-lg mx-auto" }, [
-      _vm.errors.length
+      _vm.errors && _vm.errors.length
         ? _c("div", [
             _c("b", [
               _vm._v("Please correct the following error"),
@@ -60084,7 +60086,7 @@ var render = function() {
                   )
                 ]),
                 _vm._v(" "),
-                _vm.bookings()
+                _vm.filterBookings().length > 0
                   ? [
                       _c(
                         "table",
@@ -60095,8 +60097,8 @@ var render = function() {
                           _c(
                             "tbody",
                             _vm._l(
-                              _vm.bookings().sort(function(a, b) {
-                                return new Date(b.date) - new Date(a.date)
+                              _vm.filterBookings().sort(function(a, b) {
+                                return new Date(b.start) - new Date(a.start)
                               }),
                               function(booking) {
                                 return _c("tr", { key: booking.id }, [

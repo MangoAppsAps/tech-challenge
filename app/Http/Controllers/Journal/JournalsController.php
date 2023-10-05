@@ -1,29 +1,28 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Journal;
 
 use App\Client;
-use App\Http\Requests\Journal\DestroyJournalRequest;
-use App\Http\Requests\Journal\IndexJournalRequest;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Journal\StoreJournalRequest;
 use App\Http\Resources\Journal as JournalResource;
-use App\Journal as JournalEloquentModel;
+use App\Journal;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class JournalsController extends Controller
 {
-    public function index(IndexJournalRequest $request, Client $client): AnonymousResourceCollection
+    public function index(Client $client): AnonymousResourceCollection
     {
         return JournalResource::collection(
-            JournalEloquentModel::where('client_id', $client->id)->get()
+            $client->journals
         );
     }
 
     public function store(StoreJournalRequest $request, Client $client): JournalResource
     {
         return new JournalResource(
-            JournalEloquentModel::create([
+            Journal::create([
                 'client_id' => $client->id,
                 'date' => $request->get('date'),
                 'text' => $request->get('text'),
@@ -31,8 +30,10 @@ class JournalsController extends Controller
         );
     }
 
-    public function destroy(DestroyJournalRequest $request, Client $client, JournalEloquentModel $journal): JsonResponse
+    public function destroy(Client $client, Journal $journal): JsonResponse
     {
+        $this->authorize('destroy', [$journal, $client]);
+
         return response()->json(
             $journal->delete()
         );

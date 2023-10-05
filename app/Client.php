@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/** @property-read int $id */
 class Client extends Model
 {
+    /** @var string[] */
     protected $fillable = [
+        'user_id',
         'name',
         'email',
         'phone',
@@ -17,6 +20,7 @@ class Client extends Model
         'postcode',
     ];
 
+    /** @var string[] */
     protected $appends = [
         'url',
         'bookings_count',
@@ -29,12 +33,12 @@ class Client extends Model
 
     public function bookings(): HasMany
     {
-        return $this->hasMany(Booking::class)->latest('start');
+        return $this->hasMany(Booking::class);
     }
 
     public function getBookingsCountAttribute(): int
     {
-        return $this->bookings->count();
+        return $this->bookings()->count();
     }
 
     public function journals(): HasMany
@@ -44,6 +48,6 @@ class Client extends Model
 
     public function getUrlAttribute(): string
     {
-        return "/clients/" . $this->id;
+        return route('clients.show', $this->id);
     }
 }

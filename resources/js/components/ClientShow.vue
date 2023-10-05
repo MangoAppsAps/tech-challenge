@@ -47,7 +47,7 @@
                         </select>
                     </h3>
 
-                    <template v-if="bookings()">
+                    <template v-if="filterBookings().length > 0">
                         <table class="table table-bordered table-hover">
                             <thead class="thead-light">
                                 <tr>
@@ -57,7 +57,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in bookings().sort((a, b) => new Date(b.date) - new Date(a.date))" :key="booking.id">
+                                <tr v-for="booking in filterBookings().sort((a, b) => new Date(b.start) - new Date(a.start))" :key="booking.id">
                                     <td>{{ formatBookingInterval(booking) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -71,7 +71,6 @@
                     <template v-else>
                         <p class="text-center">The client has no bookings.</p>
                     </template>
-
                 </div>
 
                 <!-- Journals -->
@@ -89,8 +88,8 @@
                                 <th>Content</th>
                                 <th>Actions</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <tr v-for="journal in journals.sort((a, b) => new Date(b.date) - new Date(a.date))" :key="journal.id">
                                 <td>{{ formatJournalDate(journal) }}</td>
                                 <td>{{ journal.text }}</td>
@@ -98,7 +97,7 @@
                                     <button class="btn btn-danger btn-sm" @click="deleteJournal(journal)">Delete</button>
                                 </td>
                             </tr>
-                        </tbody>
+                            </tbody>
                         </table>
                     </template>
 
@@ -142,25 +141,26 @@ export default {
         return {
             bookingFilter: 'all',
             currentTab: 'bookings',
+            bookings: this.client.bookings,
             journals: [],
             journalsInitialized: false,
             addJournalVisible: false,
             journal: {
                 date: moment().format('YYYY-MM-DD'),
                 text: '',
-            }
+            },
         }
     },
 
     methods: {
-        bookings() {
+        filterBookings() {
             switch (this.bookingFilter) {
                 case 'past':
-                    return this.client.bookings.filter(booking => moment.parseZone(booking.start).isBefore(moment()));
+                    return this.bookings.filter(booking => moment.parseZone(booking.start).isBefore(moment()));
                 case 'future':
-                    return this.client.bookings.filter(booking => moment.parseZone(booking.start).isAfter(moment()));
+                    return this.bookings.filter(booking => moment.parseZone(booking.start).isAfter(moment()));
                 default:
-                    return this.client.bookings;
+                    return this.bookings;
             }
         },
 
@@ -173,7 +173,10 @@ export default {
         },
 
         deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
+            axios.delete(`/clients/${this.client.id}/bookings/${booking.id}`)
+                .then(() => {
+                    this.bookings.splice(this.bookings.indexOf(booking), 1);
+                });
         },
 
         formatBookingInterval(booking) {
@@ -195,7 +198,7 @@ export default {
         getClientJournals(client) {
             axios.get(`/clients/${client.id}/journals`)
                 .then(response => {
-                    this.journals = response.data.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    this.journals = response.data.data;
                 })
                 .finally(() => {
                     this.journalsInitialized = true;
@@ -219,7 +222,7 @@ export default {
             axios.delete(`/clients/${this.client.id}/journals/${journal.id}`)
                 .then(() => {
                     this.journals.splice(this.journals.indexOf(journal), 1);
-                });
+                })
         },
     }
 }
