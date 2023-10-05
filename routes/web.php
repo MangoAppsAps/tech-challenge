@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function () {
     });
 
     Route::prefix('/{client}/bookings')->as('bookings.')->group(function () {
+        Route::get('/', [BookingController::class, 'index'])->name('index');
         Route::delete('/{booking}', [BookingController::class, 'destroy'])->name('destroy');
     });
 });

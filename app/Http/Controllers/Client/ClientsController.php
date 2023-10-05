@@ -23,9 +23,7 @@ class ClientsController extends Controller
     {
         $this->authorize('show', $client);
 
-        return view('clients.show', [
-            'client' => $client->load('bookings')
-        ]);
+        return view('clients.show', compact('client'));
     }
 
     public function store(StoreClientRequest $request): ClientResource

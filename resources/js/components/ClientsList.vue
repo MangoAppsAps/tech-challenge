@@ -5,8 +5,8 @@
             <a href="/clients/create" class="float-right btn btn-primary">+ New Client</a>
         </h1>
 
-        <table class="table">
-            <thead>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
