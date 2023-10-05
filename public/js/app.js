@@ -2091,6 +2091,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2099,37 +2143,44 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       bookingFilter: 'all',
-      currentTab: 'bookings'
+      currentTab: 'bookings',
+      journals: [],
+      journalsInitialized: false,
+      addJournalVisible: false,
+      journal: {
+        date: moment__WEBPACK_IMPORTED_MODULE_1___default()().format('YYYY-MM-DD'),
+        text: ''
+      }
     };
   },
   methods: {
     bookings: function bookings() {
-      var bookings = this.client.bookings.sort(function (a, b) {
-        return new Date(b.start) - new Date(a.start);
-      });
-
       switch (this.bookingFilter) {
         case 'past':
-          return bookings.filter(function (booking) {
+          return this.client.bookings.filter(function (booking) {
             return moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(booking.start).isBefore(moment__WEBPACK_IMPORTED_MODULE_1___default()());
           });
 
         case 'future':
-          return bookings.filter(function (booking) {
+          return this.client.bookings.filter(function (booking) {
             return moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(booking.start).isAfter(moment__WEBPACK_IMPORTED_MODULE_1___default()());
           });
 
         default:
-          return bookings;
+          return this.client.bookings;
       }
     },
     switchTab: function switchTab(newTab) {
       this.currentTab = newTab;
+
+      if (!this.journalsInitialized && newTab === 'journals') {
+        this.getClientJournals(this.client);
+      }
     },
     deleteBooking: function deleteBooking(booking) {
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
     },
-    formatInterval: function formatInterval(booking) {
+    formatBookingInterval: function formatBookingInterval(booking) {
       var start = moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(booking.start);
       var end = moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(booking.end);
       var result = start.format('dddd D MMMM YYYY, H:mm') + ' to ';
@@ -2139,6 +2190,41 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return result + end.format('dddd D MMMM YYYY, H:mm');
+    },
+    formatJournalDate: function formatJournalDate(journal) {
+      return moment__WEBPACK_IMPORTED_MODULE_1___default.a.parseZone(journal.date).format('dddd D MMMM YYYY');
+    },
+    getClientJournals: function getClientJournals(client) {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/clients/".concat(client.id, "/journals")).then(function (response) {
+        _this.journals = response.data.data.sort(function (a, b) {
+          return new Date(b.date) - new Date(a.date);
+        });
+      })["finally"](function () {
+        _this.journalsInitialized = true;
+      });
+    },
+    storeJournal: function storeJournal() {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/clients/".concat(this.client.id, "/journals"), this.journal).then(function (response) {
+        _this2.journals.push(response.data.data);
+
+        _this2.addJournalVisible = false;
+      })["finally"](function () {
+        _this2.journal = {
+          date: moment__WEBPACK_IMPORTED_MODULE_1___default()().format('YYYY-MM-DD'),
+          text: ''
+        };
+      });
+    },
+    deleteJournal: function deleteJournal(journal) {
+      var _this3 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(this.client.id, "/journals/").concat(journal.id)).then(function () {
+        _this3.journals.splice(_this3.journals.indexOf(journal), 1);
+      });
     }
   }
 });
@@ -59951,10 +60037,9 @@ var render = function() {
               { staticClass: "bg-white rounded p-4" },
               [
                 _c("h3", { staticClass: "mb-3" }, [
-                  _vm._v("List of client bookings")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "pt-2 pb-4" }, [
+                  _vm._v(
+                    "\n                    List of client bookings\n\n                    "
+                  ),
                   _c(
                     "select",
                     {
@@ -59966,6 +60051,7 @@ var render = function() {
                           expression: "bookingFilter"
                         }
                       ],
+                      staticClass: "float-right text-lg",
                       on: {
                         change: function($event) {
                           var $$selectedVal = Array.prototype.filter
@@ -59998,40 +60084,51 @@ var render = function() {
                   )
                 ]),
                 _vm._v(" "),
-                _vm.client.bookings && _vm.client.bookings.length > 0
+                _vm.bookings()
                   ? [
-                      _c("table", [
-                        _vm._m(0),
-                        _vm._v(" "),
-                        _c(
-                          "tbody",
-                          _vm._l(_vm.bookings(), function(booking) {
-                            return _c("tr", { key: booking.id }, [
-                              _c("td", [
-                                _vm._v(_vm._s(_vm.formatInterval(booking)))
-                              ]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(booking.notes))]),
-                              _vm._v(" "),
-                              _c("td", [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-danger btn-sm",
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.deleteBooking(booking)
-                                      }
-                                    }
-                                  },
-                                  [_vm._v("Delete")]
-                                )
-                              ])
-                            ])
-                          }),
-                          0
-                        )
-                      ])
+                      _c(
+                        "table",
+                        { staticClass: "table table-bordered table-hover" },
+                        [
+                          _vm._m(0),
+                          _vm._v(" "),
+                          _c(
+                            "tbody",
+                            _vm._l(
+                              _vm.bookings().sort(function(a, b) {
+                                return new Date(b.date) - new Date(a.date)
+                              }),
+                              function(booking) {
+                                return _c("tr", { key: booking.id }, [
+                                  _c("td", [
+                                    _vm._v(
+                                      _vm._s(_vm.formatBookingInterval(booking))
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", [_vm._v(_vm._s(booking.notes))]),
+                                  _vm._v(" "),
+                                  _c("td", [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.deleteBooking(booking)
+                                          }
+                                        }
+                                      },
+                                      [_vm._v("Delete")]
+                                    )
+                                  ])
+                                ])
+                              }
+                            ),
+                            0
+                          )
+                        ]
+                      )
                     ]
                   : [
                       _c("p", { staticClass: "text-center" }, [
@@ -60044,13 +60141,180 @@ var render = function() {
           : _vm._e(),
         _vm._v(" "),
         _vm.currentTab == "journals"
-          ? _c("div", { staticClass: "bg-white rounded p-4" }, [
-              _c("h3", { staticClass: "mb-3" }, [
-                _vm._v("List of client journals")
-              ]),
-              _vm._v(" "),
-              _c("p", [_vm._v("(BONUS) TODO: implement this feature")])
-            ])
+          ? _c(
+              "div",
+              { staticClass: "bg-white rounded p-4" },
+              [
+                _c("h3", { staticClass: "mb-3" }, [
+                  _vm._v(
+                    "\n                    List of client journals\n                    "
+                  ),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "float-right btn btn-primary",
+                      on: {
+                        click: function($event) {
+                          _vm.addJournalVisible = true
+                        }
+                      }
+                    },
+                    [_vm._v("+ New Journal")]
+                  )
+                ]),
+                _vm._v(" "),
+                _vm.journals.length > 0
+                  ? [
+                      _c(
+                        "table",
+                        { staticClass: "table table-bordered table-hover" },
+                        [
+                          _vm._m(1),
+                          _vm._v(" "),
+                          _c(
+                            "tbody",
+                            _vm._l(
+                              _vm.journals.sort(function(a, b) {
+                                return new Date(b.date) - new Date(a.date)
+                              }),
+                              function(journal) {
+                                return _c("tr", { key: journal.id }, [
+                                  _c("td", [
+                                    _vm._v(
+                                      _vm._s(_vm.formatJournalDate(journal))
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", [_vm._v(_vm._s(journal.text))]),
+                                  _vm._v(" "),
+                                  _c("td", [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.deleteJournal(journal)
+                                          }
+                                        }
+                                      },
+                                      [_vm._v("Delete")]
+                                    )
+                                  ])
+                                ])
+                              }
+                            ),
+                            0
+                          )
+                        ]
+                      )
+                    ]
+                  : _vm._e(),
+                _vm._v(" "),
+                !_vm.journals.length && !_vm.addJournalVisible
+                  ? [
+                      _c("p", { staticClass: "text-center" }, [
+                        _vm._v("The client has no journals.")
+                      ])
+                    ]
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.addJournalVisible
+                  ? [
+                      _c("div", { staticClass: "max-w-lg mx-auto" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "name" } }, [
+                            _vm._v("Date")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.journal.date,
+                                expression: "journal.date"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "date", id: "date" },
+                            domProps: { value: _vm.journal.date },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.journal,
+                                  "date",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "name" } }, [
+                            _vm._v("Content")
+                          ]),
+                          _vm._v(" "),
+                          _c("textarea", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.journal.text,
+                                expression: "journal.text"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { id: "text", rows: "3", required: "" },
+                            domProps: { value: _vm.journal.text },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.journal,
+                                  "text",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "text-right" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-default",
+                              on: {
+                                click: function($event) {
+                                  _vm.addJournalVisible = false
+                                }
+                              }
+                            },
+                            [_vm._v("Cancel")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary",
+                              on: { click: _vm.storeJournal }
+                            },
+                            [_vm._v("Create")]
+                          )
+                        ])
+                      ])
+                    ]
+                  : _vm._e()
+              ],
+              2
+            )
           : _vm._e()
       ])
     ])
@@ -60061,11 +60325,25 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", [
+    return _c("thead", { staticClass: "thead-light" }, [
       _c("tr", [
         _c("th", [_vm._v("Time")]),
         _vm._v(" "),
         _c("th", [_vm._v("Notes")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", { staticClass: "thead-light" }, [
+      _c("tr", [
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Content")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
       ])

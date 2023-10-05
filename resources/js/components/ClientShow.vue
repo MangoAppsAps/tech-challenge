@@ -37,19 +37,19 @@
 
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
-                    <h3 class="mb-3">List of client bookings</h3>
+                    <h3 class="mb-3">
+                        List of client bookings
 
-                    <div class="pt-2 pb-4">
-                        <select v-model="bookingFilter">
+                        <select v-model="bookingFilter" class="float-right text-lg">
                             <option value="all">All bookings</option>
                             <option value="past">Past bookings only</option>
                             <option value="future">Future bookings only</option>
                         </select>
-                    </div>
+                    </h3>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
-                        <table>
-                            <thead>
+                    <template v-if="bookings()">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
                                 <tr>
                                     <th>Time</th>
                                     <th>Notes</th>
@@ -57,8 +57,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in bookings()" :key="booking.id">
-                                    <td>{{ formatInterval(booking) }}</td>
+                                <tr v-for="booking in bookings().sort((a, b) => new Date(b.date) - new Date(a.date))" :key="booking.id">
+                                    <td>{{ formatBookingInterval(booking) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -76,9 +76,53 @@
 
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
-                    <h3 class="mb-3">List of client journals</h3>
+                    <h3 class="mb-3">
+                        List of client journals
+                        <button class="float-right btn btn-primary" @click="addJournalVisible = true">+ New Journal</button>
+                    </h3>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <template v-if="journals.length > 0">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Content</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="journal in journals.sort((a, b) => new Date(b.date) - new Date(a.date))" :key="journal.id">
+                                <td>{{ formatJournalDate(journal) }}</td>
+                                <td>{{ journal.text }}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" @click="deleteJournal(journal)">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </template>
+
+                    <template v-if="!journals.length && !addJournalVisible">
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
+
+                    <template v-if="addJournalVisible">
+                        <div class="max-w-lg mx-auto">
+                            <div class="form-group">
+                                <label for="name">Date</label>
+                                <input type="date" id="date" class="form-control" v-model="journal.date">
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Content</label>
+                                <textarea id="text" class="form-control" v-model="journal.text" rows="3" required></textarea>
+                            </div>
+
+                            <div class="text-right">
+                                <button @click="addJournalVisible = false" class="btn btn-default">Cancel</button>
+                                <button @click="storeJournal" class="btn btn-primary">Create</button>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -98,32 +142,41 @@ export default {
         return {
             bookingFilter: 'all',
             currentTab: 'bookings',
+            journals: [],
+            journalsInitialized: false,
+            addJournalVisible: false,
+            journal: {
+                date: moment().format('YYYY-MM-DD'),
+                text: '',
+            }
         }
     },
 
     methods: {
         bookings() {
-            const bookings = this.client.bookings.sort((a, b) => new Date(b.start) - new Date(a.start));
-
             switch (this.bookingFilter) {
                 case 'past':
-                    return bookings.filter(booking => moment.parseZone(booking.start).isBefore(moment()));
+                    return this.client.bookings.filter(booking => moment.parseZone(booking.start).isBefore(moment()));
                 case 'future':
-                    return bookings.filter(booking => moment.parseZone(booking.start).isAfter(moment()));
+                    return this.client.bookings.filter(booking => moment.parseZone(booking.start).isAfter(moment()));
                 default:
-                    return bookings;
+                    return this.client.bookings;
             }
         },
 
         switchTab(newTab) {
             this.currentTab = newTab;
+
+            if (!this.journalsInitialized && newTab === 'journals') {
+                this.getClientJournals(this.client);
+            }
         },
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
         },
 
-        formatInterval(booking) {
+        formatBookingInterval(booking) {
             const start = moment.parseZone(booking.start);
             const end = moment.parseZone(booking.end);
             const result = start.format('dddd D MMMM YYYY, H:mm') + ' to ';
@@ -133,6 +186,40 @@ export default {
             }
 
             return result + end.format('dddd D MMMM YYYY, H:mm');
+        },
+
+        formatJournalDate(journal) {
+            return moment.parseZone(journal.date).format('dddd D MMMM YYYY');
+        },
+
+        getClientJournals(client) {
+            axios.get(`/clients/${client.id}/journals`)
+                .then(response => {
+                    this.journals = response.data.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                })
+                .finally(() => {
+                    this.journalsInitialized = true;
+                });
+        },
+
+        storeJournal() {
+            axios.post(`/clients/${this.client.id}/journals`, this.journal)
+                .then(response => {
+                    this.journals.push(response.data.data);
+                    this.addJournalVisible = false;
+                }).finally(() => {
+                    this.journal = {
+                        date: moment().format('YYYY-MM-DD'),
+                        text: '',
+                    }
+                });
+        },
+
+        deleteJournal(journal) {
+            axios.delete(`/clients/${this.client.id}/journals/${journal.id}`)
+                .then(() => {
+                    this.journals.splice(this.journals.indexOf(journal), 1);
+                });
         },
     }
 }
