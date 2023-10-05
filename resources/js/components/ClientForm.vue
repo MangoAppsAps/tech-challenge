@@ -3,9 +3,16 @@
         <h1 class="mb-6">Clients -> Add New Client</h1>
 
         <div class="max-w-lg mx-auto">
+            <div v-if="errors.length">
+                <b>Please correct the following error<span v-if="errors.length > 1">s</span>:</b>
+                <ul>
+                    <li v-for="fieldError in errors">{{ fieldError[0] }}: {{ fieldError[1].join(', ') }}</li>
+                </ul>
+            </div>
+
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" id="name" class="form-control" v-model="client.name">
+                <input type="text" id="name" class="form-control" v-model="client.name" required>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -46,6 +53,7 @@ export default {
 
     data() {
         return {
+            errors: [],
             client: {
                 name: '',
                 email: '',
@@ -59,9 +67,16 @@ export default {
 
     methods: {
         storeClient() {
+            this.errors = null;
+
             axios.post('/clients', this.client)
                 .then((data) => {
                     window.location.href = data.data.url;
+                })
+                .catch((error) => {
+                    if (error.response.status === 422) {
+                        this.errors = Object.entries(error.response.data.errors);
+                    }
                 });
         }
     }

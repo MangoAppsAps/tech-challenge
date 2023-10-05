@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Http\Requests\Client\StoreClientRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -34,7 +35,7 @@ class ClientsController extends Controller
         return view('clients.show', ['client' => $client->load('bookings')]);
     }
 
-    public function store(Request $request): Client
+    public function store(StoreClientRequest $request): Client
     {
         $client = new Client;
         $client->user_id = $request->user()->id;

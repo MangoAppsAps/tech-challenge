@@ -1950,11 +1950,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientForm',
   data: function data() {
     return {
+      errors: [],
       client: {
         name: '',
         email: '',
@@ -1967,8 +1975,15 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     storeClient: function storeClient() {
+      var _this = this;
+
+      this.errors = null;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client).then(function (data) {
         window.location.href = data.data.url;
+      })["catch"](function (error) {
+        if (error.response.status === 422) {
+          _this.errors = Object.entries(error.response.data.errors);
+        }
       });
     }
   }
@@ -59592,6 +59607,30 @@ var render = function() {
     _c("h1", { staticClass: "mb-6" }, [_vm._v("Clients -> Add New Client")]),
     _vm._v(" "),
     _c("div", { staticClass: "max-w-lg mx-auto" }, [
+      _vm.errors.length
+        ? _c("div", [
+            _c("b", [
+              _vm._v("Please correct the following error"),
+              _vm.errors.length > 1 ? _c("span", [_vm._v("s")]) : _vm._e(),
+              _vm._v(":")
+            ]),
+            _vm._v(" "),
+            _c(
+              "ul",
+              _vm._l(_vm.errors, function(fieldError) {
+                return _c("li", [
+                  _vm._v(
+                    _vm._s(fieldError[0]) +
+                      ": " +
+                      _vm._s(fieldError[1].join(", "))
+                  )
+                ])
+              }),
+              0
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
       _c("div", { staticClass: "form-group" }, [
         _c("label", { attrs: { for: "name" } }, [_vm._v("Name")]),
         _vm._v(" "),
@@ -59605,7 +59644,7 @@ var render = function() {
             }
           ],
           staticClass: "form-control",
-          attrs: { type: "text", id: "name" },
+          attrs: { type: "text", id: "name", required: "" },
           domProps: { value: _vm.client.name },
           on: {
             input: function($event) {
