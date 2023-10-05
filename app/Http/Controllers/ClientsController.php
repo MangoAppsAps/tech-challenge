@@ -49,9 +49,13 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Request $request, Client $client): string
     {
-        Client::where('id', $client)->delete();
+        if ($client->user_id !== $request->user()->id) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        $client->delete();
 
         return 'Deleted';
     }
