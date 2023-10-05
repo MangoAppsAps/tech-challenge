@@ -2090,6 +2090,9 @@ __webpack_require__.r(__webpack_exports__);
   props: ['client'],
   data: function data() {
     return {
+      bookings: this.client.bookings.sort(function (a, b) {
+        return new Date(b.start) - new Date(a.start);
+      }),
       currentTab: 'bookings'
     };
   },

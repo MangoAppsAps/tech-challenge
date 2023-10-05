@@ -29,7 +29,7 @@ class Client extends Model
 
     public function bookings(): HasMany
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class)->latest('start');
     }
 
     public function getBookingsCountAttribute(): int

@@ -88,6 +88,7 @@ export default {
 
     data() {
         return {
+            bookings: this.client.bookings.sort((a, b) => new Date(b.start) - new Date(a.start)),
             currentTab: 'bookings',
         }
     },
