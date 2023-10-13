@@ -39,18 +39,24 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
+                    <select v-model="selectedFilter" id="filter" class="w-full px-4 py-2 border rounded-md mt-2 mb-4">
+                        <option value="all">All Bookings</option>
+                        <option value="past">Past Bookings Only</option>
+                        <option value="future">Future Bookings Only</option>
+                    </select>
+
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Time</th>
+                                    <th class="w-1/3">Time</th>
                                     <th>Notes</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                <tr v-for="booking in filteredBookings" :key="booking.id">
+                                    <td>{{ booking.formattedRange }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -79,7 +85,7 @@
 
 <script>
 import axios from 'axios';
-
+import {formatDateTimeRange} from '../utility'
 export default {
     name: 'ClientShow',
 
@@ -88,9 +94,28 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            selectedFilter: 'all'
         }
     },
 
+    created(){
+        this.client.bookings.forEach((booking, index) => {
+            const formattedRange = formatDateTimeRange(booking.start, booking.end)
+            Vue.set(this.client.bookings[index], 'formattedRange', formattedRange)
+        })
+    },
+    computed: {
+        filteredBookings() {
+            if (this.selectedFilter === 'all') {
+                return this.client.bookings;
+            } else if (this.selectedFilter === 'past') {
+                return this.client.bookings.filter(booking => new Date(booking.start) < new Date());
+            } else if (this.selectedFilter === 'future') {
+                return this.client.bookings.filter(booking => new Date(booking.start) >= new Date());
+            }
+            return [];
+        },
+    },
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;

@@ -2,6 +2,6 @@
 
 @section('content')
 <div class="container">
-    <client-form></client-form>
+    <client-form :user_id="@json($userId)"></client-form>
 </div>
 @endsection
