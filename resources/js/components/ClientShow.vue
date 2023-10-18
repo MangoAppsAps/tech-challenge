@@ -42,20 +42,18 @@
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Notes</th>
-                                    <th>Actions</th>
-                                </tr>
+                            <tr>
+                                <th>Time</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
-                                    <td>{{ booking.notes }}</td>
-                                    <td>
-                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
-                                    </td>
-                                </tr>
+                            <BookingTableRow
+                                v-for="booking in client.bookings"
+                                :booking="booking"
+                                :key="'booking' + booking.id"
+                            ></BookingTableRow>
                             </tbody>
                         </table>
                     </template>
@@ -79,9 +77,14 @@
 
 <script>
 import axios from 'axios';
+import BookingTableRow from './Booking/BookingTableRow.vue';
 
 export default {
     name: 'ClientShow',
+
+    components: {
+        BookingTableRow
+    },
 
     props: ['client'],
 
@@ -98,6 +101,16 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        }
+    },
+
+    filters: {
+        readableDateRange: function (from, to) {
+            let dateFrom = new Date(from);
+            let dateTo = new Date(to);
+
+            return dateFrom.getDay();
+            //Monday 19 January 2020, 14:00 to 15:00
         }
     }
 }
