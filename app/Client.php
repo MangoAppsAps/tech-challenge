@@ -29,6 +29,16 @@ class Client extends Model
         return $this->bookings->count();
     }
 
+    public function journals()
+    {
+        return $this->hasMany(Journal::class)->orderBy('date', 'DESC');
+    }
+
+    public function journalsCount()
+    {
+        return $this->journals->count();
+    }
+
     public function getUrlAttribute()
     {
         return "/clients/" . $this->id;

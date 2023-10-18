@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\JournalsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,8 +27,15 @@ Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function () {
     Route::post('/', 'ClientsController@store');
     Route::get('/{client}', 'ClientsController@show');
     Route::delete('/{client}', 'ClientsController@destroy');
+});
+
+Route::group(['middleware' => 'auth', 'prefix' => 'journals'], function () {
+    Route::get('/create/{client}', 'JournalsController@create')->name('journals.create');;
+    Route::post('/', 'JournalsController@store');
+    Route::delete('/{client}/{journal}', 'JournalsController@destroy');
 
     Route::get('/{client}/journals', 'JournalsController@index');
-    Route::post('/{client}/journals', 'JournalsController@store');
-    Route::delete('/{client}/journals/{journal}', 'JournalsController@destroy');
 });
+
+
+

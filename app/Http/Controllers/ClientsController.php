@@ -16,7 +16,9 @@ class ClientsController extends Controller
         foreach ($clients as $client) {
             $client->append('bookings_count');
         }
-
+        foreach ($clients as $client) {
+            $client->journals_count = $client->journalsCount();
+        }
         return view('clients.index', ['clients' => $clients]);
     }
 
@@ -30,6 +32,7 @@ class ClientsController extends Controller
     {
         $client = Client::where('id', $client)->first();
         $client->load('bookings');
+        $client->load('journals');
         return view('clients.show', ['client' => $client]);
     }
 

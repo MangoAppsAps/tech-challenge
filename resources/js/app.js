@@ -19,10 +19,11 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('clients-list', require('./components/ClientsList.vue').default);
-Vue.component('client-form', require('./components/ClientForm.vue').default);
-Vue.component('client-show', require('./components/ClientShow.vue').default);
+Vue.component('clients-list', require('./components/Clients/ClientsList.vue').default);
+Vue.component('client-form', require('./components/Clients/ClientForm.vue').default);
+Vue.component('client-show', require('./components/Clients/ClientShow.vue').default);
+
+Vue.component('journal-form', require('./components/Clients/Journals/JournalForm.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
