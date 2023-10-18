@@ -2192,7 +2192,9 @@ __webpack_require__.r(__webpack_exports__);
   props: ['clients'],
   methods: {
     deleteClient: function deleteClient(client) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(client.id));
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(client.id)).then(function () {
+        window.location.reload();
+      });
     }
   }
 });
