@@ -1937,7 +1937,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     deleteBooking: function deleteBooking(booking) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
+      // axios.delete(`/bookings/${booking.id}`);
+      alert('todo: should delete booking');
     }
   }
 });
@@ -2118,6 +2119,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2128,22 +2141,31 @@ __webpack_require__.r(__webpack_exports__);
   props: ['client'],
   data: function data() {
     return {
-      currentTab: 'bookings'
+      currentTab: 'bookings',
+      bookingFilter: 'all-bookings'
     };
+  },
+  computed: {
+    filteredBookings: function filteredBookings() {
+      switch (this.bookingFilter) {
+        case 'future-bookings':
+          return this.client.bookings.filter(function (b) {
+            return new Date(b.start) > new Date();
+          });
+
+        case 'past-bookings':
+          return this.client.bookings.filter(function (b) {
+            return new Date(b.start) < new Date();
+          });
+
+        default:
+          return this.client.bookings;
+      }
+    }
   },
   methods: {
     switchTab: function switchTab(newTab) {
       this.currentTab = newTab;
-    },
-    deleteBooking: function deleteBooking(booking) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
-    }
-  },
-  filters: {
-    readableDateRange: function readableDateRange(from, to) {
-      var dateFrom = new Date(from);
-      var dateTo = new Date(to);
-      return dateFrom.getDay(); //Monday 19 January 2020, 14:00 to 15:00
     }
   }
 });
@@ -59991,6 +60013,63 @@ var render = function() {
                   _vm._v("List of client bookings")
                 ]),
                 _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "p-2 my-2 grid grid-cols-12 bg-gray-100 rounded"
+                  },
+                  [
+                    _c("div", { staticClass: "col-span-3" }, [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.bookingFilter,
+                              expression: "bookingFilter"
+                            }
+                          ],
+                          staticClass:
+                            "py-2 px-2 w-full rounded border-white border-2 border-r-8",
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.bookingFilter = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "all-bookings" } }, [
+                            _vm._v("All bookings")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "option",
+                            { attrs: { value: "future-bookings" } },
+                            [_vm._v("Future bookings only")]
+                          ),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "past-bookings" } }, [
+                            _vm._v("Past bookings only")
+                          ])
+                        ]
+                      )
+                    ])
+                  ]
+                ),
+                _vm._v(" "),
                 _vm.client.bookings && _vm.client.bookings.length > 0
                   ? [
                       _c("table", [
@@ -59998,7 +60077,7 @@ var render = function() {
                         _vm._v(" "),
                         _c(
                           "tbody",
-                          _vm._l(_vm.client.bookings, function(booking) {
+                          _vm._l(_vm.filteredBookings, function(booking) {
                             return _c("BookingTableRow", {
                               key: "booking" + booking.id,
                               attrs: { booking: booking }

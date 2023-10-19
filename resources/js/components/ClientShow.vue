@@ -39,6 +39,18 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
+                    <div class="p-2 my-2 grid grid-cols-12 bg-gray-100 rounded">
+
+                        <div class="col-span-3">
+                            <select v-model="bookingFilter" class="py-2 px-2 w-full rounded border-white border-2 border-r-8">
+                                <option value="all-bookings">All bookings</option>
+                                <option value="future-bookings">Future bookings only</option>
+                                <option value="past-bookings">Past bookings only</option>
+                            </select>
+                        </div>
+
+                    </div>
+
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
@@ -50,7 +62,7 @@
                             </thead>
                             <tbody>
                             <BookingTableRow
-                                v-for="booking in client.bookings"
+                                v-for="booking in filteredBookings"
                                 :booking="booking"
                                 :key="'booking' + booking.id"
                             ></BookingTableRow>
@@ -91,27 +103,27 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            bookingFilter: 'all-bookings'
+        }
+    },
+
+    computed: {
+        filteredBookings () {
+            switch (this.bookingFilter) {
+                case 'future-bookings':
+                    return this.client.bookings.filter(b => new Date(b.start) > new Date())
+                case 'past-bookings':
+                    return this.client.bookings.filter(b => new Date(b.start) < new Date())
+                default:
+                    return this.client.bookings;
+            }
         }
     },
 
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;
-        },
-
-        deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
         }
     },
-
-    filters: {
-        readableDateRange: function (from, to) {
-            let dateFrom = new Date(from);
-            let dateTo = new Date(to);
-
-            return dateFrom.getDay();
-            //Monday 19 January 2020, 14:00 to 15:00
-        }
-    }
 }
 </script>

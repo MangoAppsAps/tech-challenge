@@ -32,7 +32,8 @@ export default {
 
     methods: {
         deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
+            // axios.delete(`/bookings/${booking.id}`);
+            alert('todo: should delete booking')
         }
     },
 }
