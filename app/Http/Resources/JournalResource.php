@@ -15,6 +15,7 @@ class JournalResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'date' => $this->date,
             'description' => $this->description
         ];

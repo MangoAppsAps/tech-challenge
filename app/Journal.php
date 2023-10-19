@@ -10,6 +10,16 @@ class Journal extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'date' => 'date'
+    ];
+
+    protected $fillable = [
+        'client_id',
+        'date',
+        'description'
+    ];
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);

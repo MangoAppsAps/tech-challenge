@@ -1,8 +1,8 @@
 <template>
     <tr>
-        <td class="whitespace-nowrap">{{ dateRange }}</td>
-        <td>{{ booking.notes }}</td>
-        <td>
+        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ dateRange }}</td>
+        <td class="px-3 py-4 text-sm text-gray-500">{{ booking.notes }}</td>
+        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
         </td>
     </tr>
@@ -33,7 +33,7 @@ export default {
     methods: {
         deleteBooking(booking) {
             // axios.delete(`/bookings/${booking.id}`);
-            alert('todo: should delete booking')
+            alert('not implemented: should delete booking')
         }
     },
 }

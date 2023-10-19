@@ -52,20 +52,22 @@
                     </div>
 
                     <template v-if="client.bookings && client.bookings.length > 0">
-                        <table>
+                        <table class="w-full min-w-full divide-y divide-gray-300">
                             <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Notes</th>
-                                <th>Actions</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Time</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Notes</th>
+                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                    <span class="sr-only">Actions</span>
+                                </th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <BookingTableRow
-                                v-for="booking in filteredBookings"
-                                :booking="booking"
-                                :key="'booking' + booking.id"
-                            ></BookingTableRow>
+                            <tbody class="divide-y divide-gray-200">
+                                <BookingTableRow
+                                    v-for="booking in filteredBookings"
+                                    :booking="booking"
+                                    :key="'booking' + booking.id"
+                                ></BookingTableRow>
                             </tbody>
                         </table>
                     </template>
@@ -77,10 +79,37 @@
                 </div>
 
                 <!-- Journals -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
-                    <h3 class="mb-3">List of client journals</h3>
+                <div class="w-full bg-white rounded p-4" v-if="currentTab == 'journals'">
+                    <div class="flex justify-content-between align-items-center">
+                        <h3 class="mb-3">List of client journals</h3>
+                        <a :href="`/clients/${this.client.id}/journals/create`" class="btn btn-primary btn-sm">+ New Journal</a>
+                    </div>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <template v-if="journals && journals.length > 0">
+
+                        <table class="w-full min-w-full divide-y divide-gray-300">
+                            <thead>
+                            <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Date</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
+                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                    <span class="sr-only">Actions</span>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <JournalTableRow
+                                    v-for="journal in journals"
+                                    :journal="journal"
+                                    :key="'journal' + journal.id"
+                                ></JournalTableRow>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -89,13 +118,15 @@
 
 <script>
 import axios from 'axios';
-import BookingTableRow from './Booking/BookingTableRow.vue';
+import BookingTableRow from './Booking/TableRow.vue';
+import JournalTableRow from './Journal/TableRow.vue';
 
 export default {
     name: 'ClientShow',
 
     components: {
-        BookingTableRow
+        BookingTableRow,
+        JournalTableRow
     },
 
     props: ['client'],
@@ -117,6 +148,10 @@ export default {
                 default:
                     return this.client.bookings;
             }
+        },
+
+        journals() {
+            return this.client.journals;
         }
     },
 
@@ -125,5 +160,12 @@ export default {
             this.currentTab = newTab;
         }
     },
+
+    mounted() {
+        let params = new URLSearchParams(document.location.search);
+        if (params.has('current_tab')) {
+            this.currentTab = params.get('current_tab')
+        }
+    }
 }
 </script>

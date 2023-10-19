@@ -32,7 +32,9 @@ class ClientsController extends Controller
                 'bookings' => function ($q) {
                     return $q->orderBy('start');
                 },
-                'journals'
+                'journals' => function ($q) {
+                    return $q->orderBy('date');
+                }
             ])
             ->first();
 
