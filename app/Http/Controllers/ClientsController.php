@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use App\Http\Requests\CreateClientRequest;
+use App\Http\Resources\ClientResource;
+use App\Services\Client\ClientData;
+use App\Services\Client\ClientService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,13 +14,14 @@ class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Auth::user()->clients()->get();
+        $clients = Client::where('user_id', Auth::id())
+            ->with('bookings')
+            ->get()
+            ->each(fn (Client $client) => $client->append('bookings_count'));
 
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
-
-        return view('clients.index', ['clients' => $clients]);
+        return view('clients.index', [
+            'clients' => ClientResource::collection($clients)
+        ]);
     }
 
     public function create()
@@ -25,40 +29,36 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::where('id', $client)
-            ->with([
-                'bookings' => function ($q) {
-                    return $q->orderBy('start');
-                },
-                'journals' => function ($q) {
-                    return $q->orderBy('date');
-                }
-            ])
-            ->first();
+        $client->load([
+            'bookings' => fn ($q) => $q->orderBy('start'),
+            'journals' => fn ($q) => $q->orderBy('date')
+        ]);
 
-        return view('clients.show', ['client' => $client]);
+        return view('clients.show', [
+            'client' => ClientResource::make($client)
+        ]);
     }
 
-    public function store(CreateClientRequest $request)
+    public function store(CreateClientRequest $request, ClientService $service)
     {
-        $client = new Client;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->address = $request->get('address');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
+         $client = $service->create(
+            Auth::user(),
+            ClientData::fromArray($request->all())
+        );
 
-        return $client;
+        return [
+            'url' => route('client.show', ['client' => $client->id])
+        ];
     }
 
-    public function destroy($client)
+    public function destroy(Client $client, ClientService $service)
     {
-        Client::where('id', $client)->delete();
+        $service->delete($client);
 
-        return 'Deleted';
+        return [
+            'url' => route('client.show', ['client' => $client->id])
+        ];
     }
 }

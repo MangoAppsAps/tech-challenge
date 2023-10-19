@@ -10,7 +10,7 @@ class CreateClientRequest extends FormRequest
     {
         return [
             'name' => ['required', 'max:190'],
-            'email' => ['email:rfc,dns', 'required_without:phone'],
+            'email' => ['sometimes', 'nullable', 'email:rfc,dns', 'required_without:phone'],
             'phone' => ['sometimes', 'nullable', 'regex:/^(?=.*[0-9])[- +()0-9]+$/', 'required_without:email'],
             'address' => [],
             'city' => [],

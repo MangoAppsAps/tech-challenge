@@ -7,18 +7,17 @@ use App\Journal;
 
 class JournalService
 {
-    public function create(Client $client, array $data): Journal
+    public function create(Client $client, JournalData $journalData): Journal
     {
         return Journal::create([
             'client_id' => $client->id,
-            'date' => $data['date'],
-            'description' => $data['description'],
+            'date' => $journalData->date,
+            'description' => $journalData->description,
         ]);
     }
 
-    public function delete(Journal $journal): bool
+    public function delete(Journal $journal): void
     {
         $journal->delete();
-        return true;
     }
 }
