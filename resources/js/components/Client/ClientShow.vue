@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="mb-6">Clients -> {{ client.name }}</h1>
+        <breadcrumbs>Clients -> {{ client.name }}</breadcrumbs>
 
         <div class="flex">
             <div class="w-1/3 mr-5">
@@ -101,6 +101,7 @@
                                 <JournalTableRow
                                     v-for="journal in journals"
                                     :journal="journal"
+                                    :client="client"
                                     :key="'journal' + journal.id"
                                 ></JournalTableRow>
                             </tbody>
@@ -118,8 +119,8 @@
 
 <script>
 import axios from 'axios';
-import BookingTableRow from './Booking/TableRow.vue';
-import JournalTableRow from './Journal/TableRow.vue';
+import BookingTableRow from '../Booking/TableRow.vue';
+import JournalTableRow from '../Journal/TableRow.vue';
 
 export default {
     name: 'ClientShow',

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="mb-6">Clients -> Add New Client</h1>
+        <breadcrumbs>Clients -> Add New Client</breadcrumbs>
 
         <div class="max-w-lg mx-auto">
             <div class="form-group">

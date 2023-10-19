@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="mb-6">Clients -> Journals -> Add New Journal</h1>
+        <breadcrumbs>Clients -> Journals -> Add New Journal</breadcrumbs>
 
         <div class="max-w-lg mx-auto">
             <div class="form-group">

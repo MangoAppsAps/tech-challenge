@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import moment from 'moment';
 
 export default {
@@ -33,7 +32,7 @@ export default {
     methods: {
         deleteBooking(booking) {
             // axios.delete(`/bookings/${booking.id}`);
-            alert('not implemented: should delete booking')
+            alert('not implemented')
         }
     },
 }
