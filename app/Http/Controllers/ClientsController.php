@@ -31,7 +31,8 @@ class ClientsController extends Controller
             ->with([
                 'bookings' => function ($q) {
                     return $q->orderBy('start');
-                }
+                },
+                'journals'
             ])
             ->first();
 
