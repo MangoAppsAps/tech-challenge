@@ -16,7 +16,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr 
+                    v-for="client in clients" 
+                    :key="client.id"
+                    class="client-row"
+                    :class="{'is-loading' : client.id === loadingId}"
+                >
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
@@ -39,10 +44,41 @@ export default {
 
     props: ['clients'],
 
-    methods: {
-        deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+    data() {
+        return {
+            loadingId: 0
         }
+  },
+
+    methods: {
+        async deleteClient(client) {
+            this.loadingId = client.id;
+            await axios.delete(`clients/${client.id}`);
+            window.location.reload();
+            setTimeout(() => {
+                this.loadingId = 0;
+            }, 400)
+            
+        }
+
     }
 }
 </script>
+
+<style>
+.client-row.is-loading {
+    animation: fading .5s linear infinite;
+}
+
+@keyframes fading {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+</style>
