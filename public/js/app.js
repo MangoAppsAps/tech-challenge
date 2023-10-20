@@ -2072,7 +2072,8 @@ __webpack_require__.r(__webpack_exports__);
   props: ['client'],
   data: function data() {
     return {
-      currentTab: 'bookings'
+      currentTab: 'bookings',
+      locale: 'en-DE'
     };
   },
   methods: {
@@ -2081,6 +2082,20 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteBooking: function deleteBooking(booking) {
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
+    },
+    getFormattedDate: function getFormattedDate(date) {
+      var formattedDate = new Date(date).toLocaleDateString(this.locale, {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric'
+      });
+      console.log(formattedDate);
+      return formattedDate;
+    },
+    getformattedTime: function getformattedTime(timeString) {
+      return new Date(timeString).toLocaleTimeString(this.locale, {
+        'timeStyle': 'short'
+      });
     }
   }
 });
@@ -38147,9 +38162,13 @@ var render = function() {
                             return _c("tr", { key: booking.id }, [
                               _c("td", [
                                 _vm._v(
-                                  _vm._s(booking.start) +
-                                    " - " +
-                                    _vm._s(booking.end)
+                                  _vm._s(_vm.getFormattedDate(booking.start)) +
+                                    ", " +
+                                    _vm._s(
+                                      _vm.getformattedTime(booking.start)
+                                    ) +
+                                    " to " +
+                                    _vm._s(_vm.getformattedTime(booking.end))
                                 )
                               ]),
                               _vm._v(" "),
