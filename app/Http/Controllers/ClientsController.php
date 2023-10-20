@@ -14,13 +14,14 @@ class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::where('user_id', Auth::id())
-            ->with('bookings')
-            ->get()
-            ->each(fn (Client $client) => $client->append('bookings_count'));
-
         return view('clients.index', [
-            'clients' => ClientResource::collection($clients)
+            'clients' => ClientResource::collection(
+                Client::query()
+                    ->where('user_id', Auth::id())
+                    ->with('bookings')
+                    ->get()
+                    ->each(fn (Client $client) => $client->append('bookings_count'))
+            )
         ]);
     }
 
@@ -43,22 +44,14 @@ class ClientsController extends Controller
 
     public function store(CreateClientRequest $request, ClientService $service)
     {
-         $client = $service->create(
+         return $service->create(
             Auth::user(),
             ClientData::fromArray($request->all())
         );
-
-        return [
-            'url' => route('client.show', ['client' => $client->id])
-        ];
     }
 
     public function destroy(Client $client, ClientService $service)
     {
         $service->delete($client);
-
-        return [
-            'url' => route('client.show', ['client' => $client->id])
-        ];
     }
 }

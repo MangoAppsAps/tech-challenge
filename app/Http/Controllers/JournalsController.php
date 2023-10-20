@@ -20,22 +20,14 @@ class JournalsController extends Controller
 
     public function store(CreateJournalRequest $request, Client $client, JournalService $service)
     {
-        $service->create(
+        return $service->create(
             $client,
             JournalData::fromArray($request->all())
         );
-
-        return [
-            'url' => route('client.show', ['client' => $client->id, 'current_tab' => 'journals'])
-        ];
     }
 
-    public function destroy(Request $request, Client  $client, Journal $journal, JournalService  $service)
+    public function destroy(Request $request, Journal $journal, JournalService  $service)
     {
         $service->delete($journal);
-
-        return [
-            'url' => route('client.show', ['client' => $client->id, 'current_tab' => 'journals'])
-        ];
     }
 }

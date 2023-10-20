@@ -27,7 +27,14 @@ export default {
         deleteJournal(journal) {
             axios.delete(`/clients/${this.client.id}/journals/${journal.id}`)
                 .then((data) => {
-                    window.location.href = data.data.url;
+                    window.location.href = route(
+                        'client.show',
+                        {
+                            client: this.client.id,
+                            _query: {
+                                current_tab: 'journals'
+                            }
+                        })
                 });
         }
     },

@@ -43,8 +43,15 @@ export default {
     methods: {
         storeJournal() {
             axios.post('/clients/' + this.client.id + '/journals', this.form)
-                .then((data) => {
-                    window.location.href = data.data.url;
+                .then((journal) => {
+                    window.location.href = route(
+                        'client.show',
+                        {
+                            client: journal.data.client_id,
+                            _query: {
+                                current_tab: 'journals'
+                            }
+                        })
                 })
                 .catch((err) => {
                     this.validation_errors = err.response.data.errors;

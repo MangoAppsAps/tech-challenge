@@ -64,8 +64,12 @@ export default {
     methods: {
         storeClient() {
             axios.post('/clients', this.client)
-                .then((data) => {
-                    window.location.href = data.data.url;
+                .then((client) => {
+                    window.location.href = route(
+                        'client.show',
+                        {
+                            client: client.data.id
+                        })
                 })
                 .catch((err) => {
                     this.validation_errors = err.response.data.errors

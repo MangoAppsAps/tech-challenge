@@ -2016,8 +2016,10 @@ __webpack_require__.r(__webpack_exports__);
     storeClient: function storeClient() {
       var _this = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client).then(function (data) {
-        window.location.href = data.data.url;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client).then(function (client) {
+        window.location.href = route('client.show', {
+          client: client.data.id
+        });
       })["catch"](function (err) {
         _this.validation_errors = err.response.data.errors;
       });
@@ -2338,8 +2340,13 @@ __webpack_require__.r(__webpack_exports__);
     storeJournal: function storeJournal() {
       var _this = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients/' + this.client.id + '/journals', this.form).then(function (data) {
-        window.location.href = data.data.url;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients/' + this.client.id + '/journals', this.form).then(function (journal) {
+        window.location.href = route('client.show', {
+          client: journal.data.client_id,
+          _query: {
+            current_tab: 'journals'
+          }
+        });
       })["catch"](function (err) {
         _this.validation_errors = err.response.data.errors;
       });
@@ -2384,8 +2391,15 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     deleteJournal: function deleteJournal(journal) {
+      var _this = this;
+
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(this.client.id, "/journals/").concat(journal.id)).then(function (data) {
-        window.location.href = data.data.url;
+        window.location.href = route('client.show', {
+          client: _this.client.id,
+          _query: {
+            current_tab: 'journals'
+          }
+        });
       });
     }
   }
