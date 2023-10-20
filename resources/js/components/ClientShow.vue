@@ -102,9 +102,7 @@ export default {
         },
 
         getFormattedDate(date) {
-            const formattedDate = new Date(date).toLocaleDateString(this.locale, { weekday: 'long',  month: 'long', day: 'numeric' });
-            console.log(formattedDate)
-            return formattedDate;
+            return new Date(date).toLocaleDateString(this.locale, { weekday: 'long',  month: 'long', day: 'numeric' });
         },
 
         getformattedTime(timeString) {
