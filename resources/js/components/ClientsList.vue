@@ -34,14 +34,31 @@
 <script>
 import axios from 'axios';
 
+
 export default {
     name: 'ClientsList',
 
     props: ['clients'],
 
+    data() {
+        return {
+            dialog: false,
+        };
+    },
+
     methods: {
         deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+            if (window.confirm('Are you sure you want to delete this client?')) {
+                axios.delete(`/clients/${client.id}`)
+                .then(data => {
+                    alert('Client deleted successfully.');
+                    console.log(data);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
         }
     }
 }

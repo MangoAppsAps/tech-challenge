@@ -10,7 +10,7 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
     ];
@@ -21,7 +21,8 @@ class Client extends Model
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class)
+            ->orderBy('start', 'desc');
     }
 
     public function getBookingsCountAttribute()
@@ -32,5 +33,15 @@ class Client extends Model
     public function getUrlAttribute()
     {
         return "/clients/" . $this->id;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function journals()
+    {
+        return $this->hasMany(Journal::class);
     }
 }

@@ -14,5 +14,6 @@ $factory->define(Booking::class, function (Faker $faker) {
         'start' => $start,
         'end' => $end,
         'notes' => $faker->boolean(30) ? $faker->paragraphs(1, true) : '',
+        'client_id' => $faker->numberBetween(1, 150)
     ];
 });

@@ -5,15 +5,30 @@
         <div class="max-w-lg mx-auto">
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" id="name" class="form-control" v-model="client.name">
+                <input type="text" id="name" @input="clearErrorMessage" class="form-control" v-model="client.name">
+                <div v-if="errorMessage.name" class="error-message">
+                    {{ errorMessage.name[0] }}
+                </div>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="text" id="email" class="form-control" v-model="client.email">
-            </div>
+                <input type="text" id="email" @input="clearErrorMessage" class="form-control" v-model="client.email">
+                <div v-if="errorMessage.email_or_phone" class="error-message">
+                    {{ errorMessage.email_or_phone[0] }}
+                </div>
+                <div v-else-if="errorMessage.email" class="error-message">
+                    {{ errorMessage.email[0] }}
+                </div>
+             </div>
             <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="text" id="phone" class="form-control" v-model="client.phone">
+                <input type="text" id="phone" @input="clearErrorMessage" class="form-control" v-model="client.phone">
+                <div v-if="errorMessage.email_or_phone" class="error-message">
+                    {{ errorMessage.email_or_phone[0] }}
+                </div>
+                <div v-else-if="errorMessage.phone" class="error-message">
+                    {{ errorMessage.phone[0] }}
+                </div>
             </div>
             <div class="form-group">
                 <label for="name">Address</label>
@@ -53,16 +68,33 @@ export default {
                 address: '',
                 city: '',
                 postcode: '',
-            }
+            },
+            errorMessage: '',
         }
     },
 
     methods: {
-        storeClient() {
+        storeClient(event) {
+            event.preventDefault();
+
             axios.post('/clients', this.client)
                 .then((data) => {
-                    window.location.href = data.data.url;
+                    console.log(data.data);
+                    alert('Client created!');
+                    window.location.href = '/clients';
+                })
+                .catch((error) => {
+                    console.log('error')
+                    if (error.response && error.response.status === 422) {
+                        this.errorMessage = error.response.data.errors;
+                    } else {
+                        this.errorMessage = 'An error occurred while submitting the form.';
+                        }
                 });
+        },
+
+        clearErrorMessage() {
+            this.errorMessage = '';
         }
     }
 }
