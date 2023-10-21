@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\View\View;
 
 class ClientsController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $userId = Auth::user()->id;
 
@@ -21,12 +22,12 @@ class ClientsController extends Controller
         return view('clients.index', ['clients' => $clients]);
     }
 
-    public function create()
+    public function create(): View
     {
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show($client): View
     {
         $client = Client::where('id', $client)->first();
 
@@ -36,7 +37,7 @@ class ClientsController extends Controller
         return view('clients.show', ['client' => $client]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): Client
     {
         $userId = Auth::user()->id;
 
@@ -53,10 +54,16 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy($client): bool
     {
-        Client::where('id', $client)->delete();
+        $clientEntity = Client::find($client);
 
-        return 'Deleted';
+        if ($clientEntity === null) {
+            return false;
+        }
+
+        $deleted = Client::where('id', $client)->delete();
+
+        return $deleted;
     }
 }
