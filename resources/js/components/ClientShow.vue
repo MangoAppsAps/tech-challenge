@@ -86,8 +86,34 @@
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
+                    <a :href="`/clients/${client.id}/journals/create`" class="float-right btn btn-primary">+ New journal</a>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <template v-if="journals && journals.length > 0">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Entry</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="journal in journals" :key="journal.id" class="journal-row"
+                                    :class="{ 'is-loading': journal.id === loadingId }">
+                                    <td>{{ journal.date }}</td>
+                                    <td>{{ journal.text }}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm"
+                                            @click="deleteJournal(journal)">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -106,7 +132,9 @@ export default {
         return {
             currentTab: 'bookings',
             locale: 'en-DE',
-            bookings: this.client.bookings
+            bookings: this.client.bookings,
+            journals: this.client.journals,
+            loadingId: 0
         }
     },
 
@@ -115,8 +143,19 @@ export default {
             this.currentTab = newTab;
         },
 
-        deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
+        async deleteBooking(booking) {
+            await axios.delete(`bookings/${booking.id}`);
+            window.location.reload();
+        },
+
+        async deleteJournal(journal) {
+            this.loadingId = journal.id;
+            await axios.delete(`/clients/${this.client.id}/journals/${journal.id}`);
+            window.location.reload();
+            setTimeout(() => {
+                this.loadingId = 0;
+                this.currentTab = 'journals';
+            }, 400)
         },
 
         getFormattedDate(date) {
@@ -149,3 +188,23 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+.journal-row.is-loading {
+    animation: fading .5s linear infinite;
+}
+
+@keyframes fading {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+</style>

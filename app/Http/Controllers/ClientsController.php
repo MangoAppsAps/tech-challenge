@@ -31,8 +31,11 @@ class ClientsController extends Controller
     {
         $client = Client::where('id', $client)->first();
 
-        // Add chronologically-ordered bookings belonging to client to $client, using bookings relationship
+        // Add bookings belonging to client to $client, using bookings relationship
         $client['bookings'] = $client->bookings()->orderBy('start', 'desc')->get();
+
+        // Add journals belonging to client to $client, using journals relationship
+        $client['journals'] = $client->journals()->orderBy('date', 'desc')->get();
 
         return view('clients.show', ['client' => $client]);
     }

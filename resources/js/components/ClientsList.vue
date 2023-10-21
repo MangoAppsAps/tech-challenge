@@ -54,7 +54,6 @@ export default {
             setTimeout(() => {
                 this.loadingId = 0;
             }, 400)
-
         }
 
     }
