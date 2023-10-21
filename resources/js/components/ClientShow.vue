@@ -39,7 +39,12 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <template v-if="bookings && bookings.length > 0">
+                        <select @change="filterBookings($event.target.value)">
+                            <option value="all" selected>All bookings</option>
+                            <option value="future">Future bookings only</option>
+                            <option value="past">Past bookings only</option>
+                        </select>
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +54,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in bookings" :key="booking.id">
                                     <td>{{getFormattedDate(booking.start)}}, {{ getformattedTime(booking.start) }} to {{ getformattedTime(booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,7 +93,8 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
-            locale: 'en-DE'
+            locale: 'en-DE',
+            bookings: this.client.bookings
         }
     },
 
@@ -107,6 +113,26 @@ export default {
 
         getformattedTime(timeString) {
             return new Date(timeString).toLocaleTimeString(this.locale, {'timeStyle': 'short'});
+        },
+
+        filterBookings(filterValue) {
+            if (filterValue == 'all') { // if filterValue is all, reset it to the full array from props
+                this.bookings = this.client.bookings;
+            } else {
+                if (filterValue === 'future') {
+                    this.bookings = this.client.bookings.filter((booking) => { 
+                        const dateStart = new Date(booking.start);
+                        const now = new Date();
+                        return dateStart > now;
+                    })
+                } else if (filterValue === 'past') {
+                    this.bookings = this.client.bookings.filter((booking) => { 
+                        const dateStart = new Date(booking.start);
+                        const now = new Date();
+                        return dateStart < now;
+                    })
+                } 
+            }
         }
     },
 }

@@ -2161,6 +2161,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientShow',
@@ -2168,7 +2173,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       currentTab: 'bookings',
-      locale: 'en-DE'
+      locale: 'en-DE',
+      bookings: this.client.bookings
     };
   },
   methods: {
@@ -2189,6 +2195,26 @@ __webpack_require__.r(__webpack_exports__);
       return new Date(timeString).toLocaleTimeString(this.locale, {
         'timeStyle': 'short'
       });
+    },
+    filterBookings: function filterBookings(filterValue) {
+      if (filterValue == 'all') {
+        // if filterValue is all, reset it to the full array from props
+        this.bookings = this.client.bookings;
+      } else {
+        if (filterValue === 'future') {
+          this.bookings = this.client.bookings.filter(function (booking) {
+            var dateStart = new Date(booking.start);
+            var now = new Date();
+            return dateStart > now;
+          });
+        } else if (filterValue === 'past') {
+          this.bookings = this.client.bookings.filter(function (booking) {
+            var dateStart = new Date(booking.start);
+            var now = new Date();
+            return dateStart < now;
+          });
+        }
+      }
     }
   }
 });
@@ -39770,14 +39796,40 @@ var render = function() {
                   _vm._v("List of client bookings")
                 ]),
                 _vm._v(" "),
-                _vm.client.bookings && _vm.client.bookings.length > 0
+                _vm.bookings && _vm.bookings.length > 0
                   ? [
+                      _c(
+                        "select",
+                        {
+                          on: {
+                            change: function($event) {
+                              return _vm.filterBookings($event.target.value)
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "option",
+                            { attrs: { value: "all", selected: "" } },
+                            [_vm._v("All bookings")]
+                          ),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "future" } }, [
+                            _vm._v("Future bookings only")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "past" } }, [
+                            _vm._v("Past bookings only")
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
                       _c("table", [
                         _vm._m(0),
                         _vm._v(" "),
                         _c(
                           "tbody",
-                          _vm._l(_vm.client.bookings, function(booking) {
+                          _vm._l(_vm.bookings, function(booking) {
                             return _c("tr", { key: booking.id }, [
                               _c("td", [
                                 _vm._v(
