@@ -1970,29 +1970,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientForm',
@@ -2166,6 +2143,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientShow',
@@ -2240,10 +2229,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-//
-//
-//
-//
 //
 //
 //
@@ -39699,8 +39684,12 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("h1", { staticClass: "mb-6" }, [
-      _vm._v("Clients -> " + _vm._s(_vm.client.name))
+    _c("ol", { staticClass: "mb-6" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("li", { staticClass: "breadcrumb-item active" }, [
+        _vm._v(_vm._s(_vm.client.name))
+      ])
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "flex" }, [
@@ -39740,9 +39729,17 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("td", [
-                  _vm._v(_vm._s(_vm.client.address)),
+                  _vm._v(
+                    "\n                                " +
+                      _vm._s(_vm.client.address)
+                  ),
                   _c("br"),
-                  _vm._v(_vm._s(_vm.client.postcode + " " + _vm.client.city))
+                  _vm._v(
+                    _vm._s(_vm.client.postcode) +
+                      " " +
+                      _vm._s(_vm.client.city) +
+                      "\n                            "
+                  )
                 ])
               ])
             ])
@@ -39825,7 +39822,7 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _c("table", [
-                        _vm._m(0),
+                        _vm._m(1),
                         _vm._v(" "),
                         _c(
                           "tbody",
@@ -39838,7 +39835,7 @@ var render = function() {
                                     _vm._s(
                                       _vm.getformattedTime(booking.start)
                                     ) +
-                                    " to " +
+                                    " to\n                                    " +
                                     _vm._s(_vm.getformattedTime(booking.end))
                                 )
                               ]),
@@ -39889,6 +39886,14 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "breadcrumb-item" }, [
+      _c("a", { attrs: { href: "/clients" } }, [_vm._v("Clients")])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -52509,7 +52514,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!*******************************************************************************!*\
   !*** ./resources/js/components/ClientShow.vue?vue&type=template&id=7ffe1e13& ***!
   \*******************************************************************************/
-/*! exports provided: render, staticRenderFns */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

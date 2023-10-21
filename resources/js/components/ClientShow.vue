@@ -1,6 +1,9 @@
 <template>
     <div>
-        <h1 class="mb-6">Clients -> {{ client.name }}</h1>
+        <ol class="mb-6">
+            <li class="breadcrumb-item"><a href="/clients">Clients</a></li>
+            <li class="breadcrumb-item active">{{ client.name }}</li>
+        </ol>
 
         <div class="flex">
             <div class="w-1/3 mr-5">
@@ -22,7 +25,9 @@
                             </tr>
                             <tr>
                                 <th class="text-gray-600 pr-3">Address</th>
-                                <td>{{ client.address }}<br/>{{ client.postcode + ' ' + client.city }}</td>
+                                <td>
+                                    {{ client.address }}<br />{{ client.postcode }} {{ client.city }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -31,8 +36,12 @@
 
             <div class="w-2/3">
                 <div>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
+                    <button class="btn"
+                        :class="{ 'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings' }"
+                        @click="switchTab('bookings')">Bookings</button>
+                    <button class="btn"
+                        :class="{ 'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals' }"
+                        @click="switchTab('journals')">Journals</button>
                 </div>
 
                 <!-- Bookings -->
@@ -55,10 +64,13 @@
                             </thead>
                             <tbody>
                                 <tr v-for="booking in bookings" :key="booking.id">
-                                    <td>{{getFormattedDate(booking.start)}}, {{ getformattedTime(booking.start) }} to {{ getformattedTime(booking.end) }}</td>
+                                    <td>{{ getFormattedDate(booking.start) }}, {{ getformattedTime(booking.start) }} to
+                                        {{
+                                            getformattedTime(booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
-                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
+                                        <button class="btn btn-danger btn-sm"
+                                            @click="deleteBooking(booking)">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -108,11 +120,11 @@ export default {
         },
 
         getFormattedDate(date) {
-            return new Date(date).toLocaleDateString(this.locale, { weekday: 'long',  month: 'long', day: 'numeric' });
+            return new Date(date).toLocaleDateString(this.locale, { weekday: 'long', month: 'long', day: 'numeric' });
         },
 
         getformattedTime(timeString) {
-            return new Date(timeString).toLocaleTimeString(this.locale, {'timeStyle': 'short'});
+            return new Date(timeString).toLocaleTimeString(this.locale, { 'timeStyle': 'short' });
         },
 
         filterBookings(filterValue) {
@@ -120,18 +132,18 @@ export default {
                 this.bookings = this.client.bookings;
             } else {
                 if (filterValue === 'future') {
-                    this.bookings = this.client.bookings.filter((booking) => { 
+                    this.bookings = this.client.bookings.filter((booking) => {
                         const dateStart = new Date(booking.start);
                         const now = new Date();
                         return dateStart > now;
                     })
                 } else if (filterValue === 'past') {
-                    this.bookings = this.client.bookings.filter((booking) => { 
+                    this.bookings = this.client.bookings.filter((booking) => {
                         const dateStart = new Date(booking.start);
                         const now = new Date();
                         return dateStart < now;
                     })
-                } 
+                }
             }
         }
     },

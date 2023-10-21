@@ -16,12 +16,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr 
-                    v-for="client in clients" 
-                    :key="client.id"
-                    class="client-row"
-                    :class="{'is-loading' : client.id === loadingId}"
-                >
+                <tr v-for="client in clients" :key="client.id" class="client-row"
+                    :class="{ 'is-loading': client.id === loadingId }">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
@@ -48,7 +44,7 @@ export default {
         return {
             loadingId: 0
         }
-  },
+    },
 
     methods: {
         async deleteClient(client) {
@@ -58,7 +54,7 @@ export default {
             setTimeout(() => {
                 this.loadingId = 0;
             }, 400)
-            
+
         }
 
     }
@@ -74,9 +70,11 @@ export default {
     0% {
         opacity: 1;
     }
+
     50% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }

@@ -38,6 +38,8 @@ class ClientsController extends Controller
 
     public function store(Request $request)
     {
+        $userId = Auth::user()->id;
+
         $client = new Client;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
@@ -45,6 +47,7 @@ class ClientsController extends Controller
         $client->address = $request->get('address');
         $client->city = $request->get('city');
         $client->postcode = $request->get('postcode');
+        $client->owner_id = $userId;
         $client->save();
 
         return $client;
