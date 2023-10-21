@@ -65,7 +65,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .client-row.is-loading {
     animation: fading .5s linear infinite;
 }
