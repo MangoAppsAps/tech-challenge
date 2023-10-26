@@ -1,10 +1,9 @@
 <?php
 
 use App\User;
-use App\Client;
 use Illuminate\Database\Seeder;
 
-class ClientSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,6 +12,6 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        factory(Client::class, 150)->create();
+        factory(User::class, 2)->create();
     }
 }

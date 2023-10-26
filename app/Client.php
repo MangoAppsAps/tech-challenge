@@ -33,4 +33,9 @@ class Client extends Model
     {
         return "/clients/" . $this->id;
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

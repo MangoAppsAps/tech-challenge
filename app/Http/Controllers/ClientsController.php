@@ -9,8 +9,9 @@ class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $clients = Client::where('user_id', auth()->user()->id)->get();
 
+        // TODO: append directly on the Eloquent query. No need for loop
         foreach ($clients as $client) {
             $client->append('bookings_count');
         }
@@ -32,7 +33,9 @@ class ClientsController extends Controller
 
     public function store(Request $request)
     {
+        // TODO: Place this in a form request for validation and save validated data
         $client = new Client;
+        $client->user_id = auth()->user()->id;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
@@ -46,6 +49,7 @@ class ClientsController extends Controller
 
     public function destroy($client)
     {
+        // TODO: validate this for only allowing current auth()->user() to delete clients owned by them
         Client::where('id', $client)->delete();
 
         return 'Deleted';
