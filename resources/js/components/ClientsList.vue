@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr v-for="client in visibleClients" :key="client.id">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
@@ -39,9 +39,21 @@ export default {
 
     props: ['clients'],
 
+    data() {
+        return {
+            visibleClients: [],
+        }
+    },
+
+    mounted() {
+        this.visibleClients = this.clients;
+    },
+
     methods: {
         deleteClient(client) {
+            // TODO: Confirm that user really wants to delete this client with modal, for example
             axios.delete(`/clients/${client.id}`);
+            this.visibleClients = this.visibleClients.filter(c => c.id !== client.id);
         }
     }
 }
