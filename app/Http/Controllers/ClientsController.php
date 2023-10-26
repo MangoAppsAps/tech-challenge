@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Http\Requests\ClientStoreRequest;
 use Illuminate\Http\Request;
 
+// TODO: Rename to "ClientController" to follow naming conventions of SingularController
 class ClientsController extends Controller
 {
     public function index()
@@ -31,20 +33,9 @@ class ClientsController extends Controller
         return view('clients.show', ['client' => $client]);
     }
 
-    public function store(Request $request)
+    public function store(ClientStoreRequest $request)
     {
-        // TODO: Place this in a form request for validation and save validated data
-        $client = new Client;
-        $client->user_id = auth()->user()->id;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->address = $request->get('address');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
-
-        return $client;
+        return Client::create($request->validated());
     }
 
     public function destroy($client)
@@ -52,6 +43,7 @@ class ClientsController extends Controller
         // TODO: validate this for only allowing current auth()->user() to delete clients owned by them
         Client::where('id', $client)->delete();
 
+        // TODO: Remove as this is not being read on the front-end
         return 'Deleted';
     }
 }
