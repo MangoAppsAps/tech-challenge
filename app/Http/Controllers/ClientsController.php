@@ -11,12 +11,10 @@ class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::where('user_id', auth()->user()->id)->get();
-
-        // TODO: append directly on the Eloquent query. No need for loop
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
+        $clients = Client::where('user_id', auth()->user()->id)
+            ->orderByDesc('created_at')
+            ->get()
+            ->append('bookings_count');
 
         return view('clients.index', ['clients' => $clients]);
     }
