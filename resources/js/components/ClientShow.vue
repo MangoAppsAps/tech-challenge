@@ -50,7 +50,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                    <td>{{`${convertDate(booking.start)}, ${convertTime(booking.start)} to ${convertTime(booking.end)}`}}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -98,7 +98,23 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
-        }
+        },
+
+        convertDate(dateTime) {
+            return new Date(dateTime).toLocaleString('en-gb', {
+                year: 'numeric',
+                month: 'long',
+                day: '2-digit',
+                weekday: 'long'
+            }).replace(',', '');
+        },
+
+        convertTime(dateTime) {
+            return new Date(dateTime).toLocaleString('en-gb', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        },
     }
 }
 </script>
