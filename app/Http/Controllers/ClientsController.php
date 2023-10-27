@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use App\Http\Requests\ClientStoreRequest;
-use Illuminate\Http\Request;
 
 // TODO: Rename to "ClientController" to follow naming conventions of SingularController
 class ClientsController extends Controller
@@ -26,7 +25,7 @@ class ClientsController extends Controller
 
     public function show($client)
     {
-        $client = Client::where('id', $client)->with('bookings')->first();
+        $client = Client::where('id', $client)->with(['bookings', 'journals'])->first();
 
         return view('clients.show', ['client' => $client]);
     }

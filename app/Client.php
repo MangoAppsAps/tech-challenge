@@ -39,4 +39,9 @@ class Client extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function journals()
+    {
+        return $this->hasMany(Journal::class);
+    }
 }
