@@ -88,14 +88,19 @@
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals' && journals == 'index'">
                     <h3 class="mb-3">List of client journals</h3>
-                    <hr />
-                    <div v-for="journal in visibleJournals"
-                        :key="`journal_${journal.id}`">
-                        <p class="italic">{{ convertDate(journal.date) }}</p>
-                        <p>{{ journal.text }}</p>
-                        <button class="btn btn-danger btn-sm" @click="deleteJournal(journal)">Delete</button>
+                    <template v-if="visibleJournals && visibleJournals.length">
                         <hr />
-                    </div>
+                        <div v-for="journal in visibleJournals"
+                            :key="`journal_${journal.id}`">
+                            <p class="italic">{{ convertDate(journal.date) }}</p>
+                            <p>{{ journal.text }}</p>
+                            <button class="btn btn-danger btn-sm" @click="deleteJournal(journal)">Delete</button>
+                            <hr />
+                        </div>
+                    </template>
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
 
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals' && journals == 'create'">
@@ -159,7 +164,10 @@ export default {
         },
 
         deleteBooking(booking) {
-            // TODO: Confirm that user really wants to delete this
+            let confirmation = confirm('Are you sure you would like to delete this booking?')
+            if (!confirmation) return;
+
+            // TODO: Create bookings controller to be able to delete bookings
             axios.delete(`/bookings/${booking.id}`);
             // TODO: Remove this booking from the visible bookings
         },
