@@ -52,7 +52,7 @@ class ClientStoreRequest extends FormRequest
         return [
             'user_id'  => ['required'],
             'name'     => ['required', 'max:190'],
-            'email'    => ['email', 'required_if:phone,=,null'],
+            'email'    => ['nullable', 'email', 'required_if:phone,=,null'],
             'phone'    => ['nullable', 'regex:/^[\d\s\+]+$/', 'required_if:email,=,null'], // Only digits, spaces, and pluses
             'address'  => ['nullable'],
             'city'     => ['nullable'],
