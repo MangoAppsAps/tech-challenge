@@ -31,7 +31,15 @@
 
             <div class="w-2/3">
                 <div>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
+                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}">
+                        Bookings
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <span class="dropdown-item cursor-pointer" @click="setList('bookings', 'all')">All Bookings</span>
+                        <span class="dropdown-item cursor-pointer" @click="setList('bookings', 'future')">Future bookings only</span>
+                        <span class="dropdown-item cursor-pointer" @click="setList('bookings', 'past')">Past bookings only</span>
+                    </div>
                     <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
                 </div>
 
@@ -39,7 +47,7 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <template v-if="visibleBookings && visibleBookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +57,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in visibleBookings" :key="booking.id">
                                     <td>{{`${convertDate(booking.start)}, ${convertTime(booking.start)} to ${convertTime(booking.end)}`}}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,12 +96,36 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            allBookings: this.client.bookings,
+            visibleBookings: [],
         }
     },
 
+    mounted() {
+        this.visibleBookings = this.allBookings
+    },
+
     methods: {
+        setList(tab, type = null) {
+            this.switchTab(tab);
+            if (tab == 'bookings') this.filterBookings(type);
+        },
         switchTab(newTab) {
             this.currentTab = newTab;
+        },
+
+        filterBookings(type) {
+            console.log('filterBookings', type)
+            switch (type) {
+                case 'past':
+                    this.visibleBookings = this.allBookings.filter(b => new Date(b.start) < new Date());
+                    break;
+                case 'future':
+                    this.visibleBookings = this.allBookings.filter(b => new Date(b.end) > new Date());
+                    break;
+
+                default: this.visibleBookings = this.allBookings; break;
+            }
         },
 
         deleteBooking(booking) {
