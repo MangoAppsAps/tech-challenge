@@ -41,9 +41,6 @@ class ClientController extends Controller
     public function destroy($client)
     {
         // TODO: validate this for only allowing current auth()->user() to delete clients owned by them
-        Client::where('id', $client)->delete();
-
-        // TODO: Remove as this is not being read on the front-end
-        return 'Deleted';
+        return Client::where('id', $client)->delete();
     }
 }
