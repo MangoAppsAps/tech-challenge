@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Client;
 use App\Http\Requests\ClientStoreRequest;
 
-// TODO: Rename to "ClientController" to follow naming conventions of SingularController
-class ClientsController extends Controller
+class ClientController extends Controller
 {
     public function index()
     {

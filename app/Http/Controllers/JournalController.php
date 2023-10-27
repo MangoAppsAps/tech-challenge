@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\JournalDestroyRequest;
-use App\Journal;
 use App\Http\Requests\JournalStoreRequest;
+use App\Journal;
 
 class JournalController extends Controller
 {
