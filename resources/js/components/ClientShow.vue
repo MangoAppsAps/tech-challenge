@@ -115,7 +115,6 @@ export default {
         },
 
         filterBookings(type) {
-            console.log('filterBookings', type)
             switch (type) {
                 case 'past':
                     this.visibleBookings = this.allBookings.filter(b => new Date(b.start) < new Date());
