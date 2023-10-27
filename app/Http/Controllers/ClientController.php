@@ -24,7 +24,11 @@ class ClientController extends Controller
 
     public function show($client)
     {
-        $client = Client::where('id', $client)->with(['bookings', 'journals'])->first();
+        $client = Client::where('user_id', auth()->user()->id)
+            ->where('id', $client)
+            ->with(['bookings', 'journals'])
+            ->first();
+        if (!$client) return redirect('/clients');
 
         return view('clients.show', ['client' => $client]);
     }
