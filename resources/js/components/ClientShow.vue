@@ -22,7 +22,7 @@
                             </tr>
                             <tr>
                                 <th class="text-gray-600 pr-3">Address</th>
-                                <td>{{ client.address }}<br/>{{ client.postcode + ' ' + client.city }}</td>
+                                <td>{{ client.address }}<br />{{ client.postcode + ' ' + client.city }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -36,7 +36,7 @@
                 </div>
 
                 <!-- Bookings -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
+                <div v-if="currentTab == 'bookings'" class="bg-white rounded p-4">
                     <h3 class="mb-3">List of client bookings</h3>
 
                     <template v-if="client.bookings && client.bookings.length > 0">
@@ -63,11 +63,10 @@
                     <template v-else>
                         <p class="text-center">The client has no bookings.</p>
                     </template>
-
                 </div>
 
                 <!-- Journals -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
+                <div v-if="currentTab == 'journals'" class="bg-white rounded p-4">
                     <h3 class="mb-3">List of client journals</h3>
 
                     <p>(BONUS) TODO: implement this feature</p>
