@@ -37,9 +37,16 @@
 
                 <!-- Bookings -->
                 <div v-if="currentTab == 'bookings'" class="bg-white rounded p-4">
-                    <h3 class="mb-3">List of client bookings</h3>
+                    <div class="flex justify-between items-center mb-3">
+                        <div>
+                            <h3>List of client bookings</h3>
+                        </div>
+                        <div>
+                            <DrowdownComponent :id="'booking_list_filter'" label="Show" :name="'booking_list_filter'" :options="bookingShowOptions" @selected="onShowSelected" />
+                        </div>
+                    </div>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <template v-if="renderBookings && renderBookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +56,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in renderBookings" :key="booking.id">
                                     <td>{{ formatTime(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -79,27 +86,38 @@
 <script>
 import { humanizeDatetimeDuration } from '../utils/DateUtils';
 import axios from 'axios';
+import DrowdownComponent from './DrowdownComponent.vue';
+import moment from 'moment';
+
+const SHOW_ALL_VALUE = 1;
+const SHOW_FUTURE_VALUE = 2;
+const SHOW_PAST_VALUE = 3;
 
 export default {
-    name: 'ClientShow',
-
-    props: ['client'],
-
+    name: "ClientShow",
+    components: { DrowdownComponent },
+    props: ["client"],
     data() {
         return {
-            currentTab: 'bookings',
-        }
+            currentTab: "bookings",
+            renderBookings: [],
+            bookingShowOptions: [
+                {value: SHOW_ALL_VALUE, text: 'All Bookings'}, 
+                {value: SHOW_FUTURE_VALUE, text: 'Future Bookings'}, 
+                {value: SHOW_PAST_VALUE, text: 'Past Bookings'}
+            ]
+        };
     },
-
+    mounted() {
+        this.renderBookings = this.client.bookings; 
+    },
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;
         },
-
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
         },
-
         /**
          * Formats the date duration for the "Time" column
          * @param {string} start 
@@ -108,6 +126,39 @@ export default {
          */
         formatTime(start, stop) {
             return humanizeDatetimeDuration(start, stop);
+        },
+        /**
+         * Event listener listening for a change in the "Show" dropdown.
+         * Filters the bookings according to the selected value.
+         * 
+         * TODO: The method filters the bookings received in the prop, which
+         *       means that it expects all the client bookings to be part
+         *       of the data. A better solution would be to filter the 
+         *       bookings server side, as the current way will cause
+         *       issues if pagination is introduced in the future.
+         * 
+         * @param {number} val
+         * @return {void}
+         */
+        onShowSelected(val) {
+            const now = moment();
+            
+            if (val === SHOW_FUTURE_VALUE) {
+                this.renderBookings = this.client.bookings.filter((booking) => {
+                    return moment(booking.start).isAfter(now);
+                });
+                return;
+            }
+
+            if (val === SHOW_PAST_VALUE) {
+                this.renderBookings = this.client.bookings.filter((booking) => {
+                    return moment(booking.end).isBefore(now);
+                });
+                return;
+            } 
+
+            this.renderBookings = this.client.bookings;
+
         }
     }
 }
