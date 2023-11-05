@@ -54,6 +54,52 @@ class ClientsControllerTest extends TestCase
     }
 
     /**
+     * Test the index action and the ordering.
+     */
+    public function testIndexAndOrder(): void
+    {
+        DB::beginTransaction();
+
+        $user = User::first() ?? factory(User::class)->create();
+        $this->actingAs($user);
+    
+        // Create a new client for this test
+        $first = new Client();
+        $first->name = "Test index 1";
+        $first->email = "test1@example.com";
+        $first->phone = "123456";
+        $first->user_id = $user->id;
+        $first->saveOrFail();
+
+        // Sleep for one second to prevent clients from being created on the same second
+        // TODO: Solve this in a more elegant way as we don't want to have arbitrary
+        //       sleep periods spread around our tests affecting the performance.
+        sleep(1);
+
+        // Create a new client for this test
+        $latest = new Client();
+        $latest->name = "Test index 2";
+        $latest->email = "test2@example.com";
+        $latest->phone = "654321";
+        $latest->user_id = $user->id;
+        $latest->saveOrFail();
+
+        // Fetch the clients from the index action
+        $response = $this->get('/clients');
+        $response->assertStatus(200);
+
+        $response->assertViewIs('clients.index');
+        $response->assertViewHas('clients', function ($clients) use ($latest) {
+            // Assert that the first client returned, is the 
+            // new client we created during this test.
+            $this->assertTrue($latest->is($clients->first()));
+            return true;
+        });
+
+        DB::rollBack();
+    }
+
+    /**
      * Test the store action.
      */
     public function testStore(): void

@@ -11,7 +11,7 @@ class ClientsController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $clients = Client::where('user_id', $user->id)->get();
+        $clients = Client::latest()->where('user_id', $user->id)->get();
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
