@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr v-for="client in renderClients" :key="client.id">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
@@ -39,9 +39,32 @@ export default {
 
     props: ['clients'],
 
+    data() {
+        return {
+            renderClients: [],
+        };
+    },
+
+    mounted() {
+        this.renderClients = this.clients;
+    },
+
     methods: {
+        /**
+         * Delete a specific client server-side
+         * 
+         * @param {object} client
+         * @returns {void}
+         */
         deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+            axios.delete(`/clients/${client.id}`).then(() => {
+                this.renderClients = this.clients.filter((c) => {
+                    return c.id !== client.id;
+                });
+            }).catch((e) => {
+                // TODO: How do we handle server-side errors properly?
+                console.error(e);
+            });
         }
     }
 }
