@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "mix-tailwindcss": "^1.3.0",
+        "moment": "^2.29.4",
         "tailwindcss": "^2.1.4"
     }
 }
