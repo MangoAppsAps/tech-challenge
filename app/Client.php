@@ -2,8 +2,12 @@
 
 namespace App;
 
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read Collection $bookings
+ */
 class Client extends Model
 {
     protected $fillable = [
