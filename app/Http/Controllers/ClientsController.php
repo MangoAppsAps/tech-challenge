@@ -39,6 +39,12 @@ class ClientsController extends Controller
 
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'name' => 'required|string|max:190',
+            'email' => 'required_without:phone|nullable|email',
+            'phone' => 'required_without:email|nullable|regex:/^[\d\s+]+$/',
+        ]);
+
         $user = auth()->user();
 
         $client = new Client;
