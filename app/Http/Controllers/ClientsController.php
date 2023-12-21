@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $clients = auth()->user()->clients;
 
         foreach ($clients as $client) {
-            $client->append('bookings_count');
+            $client->append('bookings_count', 'journals_count');
         }
 
         return view('clients.index', ['clients' => $clients]);
@@ -23,20 +24,37 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::where('id', $client)->first();
+        if (!Gate::allows('view-client', $client)) {
+            abort(403);
+        }
+
+        $client->load([
+            'bookings' => function ($query) {
+                $query->orderBy('start', 'desc');
+            },
+            'journals' => function ($query) {
+                $query->orderBy('date', 'desc');
+            },
+        ]);
 
         return view('clients.show', ['client' => $client]);
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|max:190',
+            'email' => 'email:dns|required_without:phone',
+            'phone' => 'required_without:email|regex:/^(?=.*[0-9])[ +()0-9]+$/',
+        ]);
+
         $client = new Client;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
+        $client->address = $request->get('address');
         $client->city = $request->get('city');
         $client->postcode = $request->get('postcode');
         $client->save();
@@ -44,9 +62,13 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
+        if (! Gate::allows('delete-client', $client)) {
+            abort(403);
+        }
+
+        $client->delete();
 
         return 'Deleted';
     }

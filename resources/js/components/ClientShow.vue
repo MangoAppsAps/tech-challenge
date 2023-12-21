@@ -38,20 +38,30 @@
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
-
+                    <div>
+                        <select v-model="filter" class="shadow-sm border border-gray-500 p-2 mb-4 bg-transparent">
+                            <option value="all">All bookings</option>
+                            <option value="future">Future bookings only</option>
+                            <option value="past">Past bookings only</option>
+                        </select>
+                    </div>
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Time</th>
-                                    <th>Notes</th>
+                                    <th class="px-2">Notes</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
-                                    <td>{{ booking.notes }}</td>
+                                <tr v-for="booking in bookings" :key="booking.id" class="border-bottom border-gray-500">
+                                    <td class="text-nowrap">
+                                        {{ booking.date }},
+                                        <br />
+                                        {{ booking.timeframe }}
+                                    </td>
+                                    <td class="px-2">{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
                                     </td>
@@ -69,8 +79,10 @@
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
-
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <journals v-if="client.journals && client.journals.length" :client="client" />
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -79,15 +91,27 @@
 
 <script>
 import axios from 'axios';
+import Journals from './Journals.vue'
 
 export default {
     name: 'ClientShow',
+    components: { Journals },
 
-    props: ['client'],
+    props: ['client', 'tab'],
+
+    mounted () {
+        this.bookings = { ...this.client.bookings }
+        if (this.tab && ['bookings', 'journals'].includes(this.tab)) {
+            this.currentTab = this.tab
+            window.history.replaceState(null, '', window.location.pathname)
+        }
+    },
 
     data() {
         return {
             currentTab: 'bookings',
+            filter: 'all',
+            bookings: [],
         }
     },
 
@@ -96,8 +120,37 @@ export default {
             this.currentTab = newTab;
         },
 
-        deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
+        async deleteBooking(booking) {
+            try {
+                await axios.delete(`/clients/${this.client.id}/bookings/${booking.id}`)
+                let key = _.findKey(this.bookings, { id: booking.id })
+                if (key) {
+                    this.client.bookings.splice(key, 1)
+                    this.applyFilter()
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        },
+
+        applyFilter(filter) {
+            let currentTime = Date.now() / 1000
+            switch (filter) {
+                case 'future':
+                    this.bookings = this.client.bookings.filter(booking => booking.start_stamp > currentTime)
+                break
+                case 'past':
+                    this.bookings = this.client.bookings.filter(booking => booking.start_stamp <= currentTime)
+                break
+                default:
+                    this.bookings = { ...this.client.bookings }
+                break
+            }
+        }
+    },
+    watch: {
+        filter (val) {
+            this.applyFilter(val)
         }
     }
 }

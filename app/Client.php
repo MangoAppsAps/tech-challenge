@@ -10,7 +10,7 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
     ];
@@ -29,8 +29,23 @@ class Client extends Model
         return $this->bookings->count();
     }
 
+    public function getJournalsCountAttribute()
+    {
+        return $this->journals->count();
+    }
+
     public function getUrlAttribute()
     {
         return "/clients/" . $this->id;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function journals()
+    {
+        return $this->hasMany(Journal::class);
     }
 }

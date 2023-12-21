@@ -1,5 +1,7 @@
 <?php
 
+use Database\Seeders\JournalSeeder;
+use Database\Seeders\UserSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -11,7 +13,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(UserSeeder::class);
         $this->call(ClientSeeder::class);
         $this->call(BookingSeeder::class);
+        $this->call(JournalSeeder::class);
     }
 }

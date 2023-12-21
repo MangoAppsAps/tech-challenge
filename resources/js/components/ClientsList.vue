@@ -12,18 +12,20 @@
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Number of Bookings</th>
+                    <th>Number of Journals</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr v-for="(client, index) in clientsList" :key="client.id">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
                     <td>{{ client.bookings_count }}</td>
+                    <td>{{ client.journals_count }}</td>
                     <td>
                         <a class="btn btn-primary btn-sm" :href="`/clients/${client.id}`">View</a>
-                        <button class="btn btn-danger btn-sm" @click="deleteClient(client)">Delete</button>
+                        <button class="btn btn-danger btn-sm" @click="deleteClient(client, index)">Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -38,10 +40,23 @@ export default {
     name: 'ClientsList',
 
     props: ['clients'],
+    data () {
+      return {
+          clientsList: [],
+      }
+    },
+    mounted () {
+        this.clientsList = this.clients
+    },
 
     methods: {
-        deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+        async deleteClient(client, index) {
+            try {
+                await axios.delete(`/clients/${client.id}`);
+                this.clientsList.splice(index, 1)
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 }
