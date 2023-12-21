@@ -79,7 +79,34 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <p>
+                        <a :href="`/clients/${client.id}/journals/create`" class="btn btn-primary">Add New Journal</a>
+                    </p>
+
+                    <template v-if="client.journals && client.journals.length > 0">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="journal in client.journals" :key="journal.id">
+                                <td>{{ journal.date }}</td>
+                                <td>{{ journal.notes }}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" @click.prevent="deleteJournal(client, journal)">Delete</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -99,6 +126,13 @@ export default {
         return {
             currentTab: 'bookings',
             show: 'all',
+        }
+    },
+
+    mounted() {
+        // set tab from url
+        if (window.location.hash) {
+            this.currentTab = window.location.hash.replace('#', '');
         }
     },
 
@@ -132,6 +166,13 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+
+        deleteJournal(client, journal) {
+            axios.delete(`/clients/${client.id}/journals/${journal.id}`)
+                .then(function (response) {
+                    window.location.href = `/clients/${client.id}`
+                })
         }
     }
 }

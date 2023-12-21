@@ -32,9 +32,14 @@ class ClientsController extends Controller
 
         $this->validateOwnership($currentUser, $client);
 
-        $client->load(['bookings' => function ($query) {
-            $query->orderBy('start', 'desc');
-        }]);
+        $client->load([
+            'bookings' => function ($query) {
+                $query->orderBy('start', 'desc');
+            },
+            'journals' => function ($query) {
+                $query->orderBy('date', 'desc');
+            },
+        ]);
 
         return view('clients.show', ['client' => $client]);
     }
