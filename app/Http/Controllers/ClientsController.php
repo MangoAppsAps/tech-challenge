@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $clients = auth()->user()->clients;
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
@@ -23,9 +24,13 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::where('id', $client)->first();
+        if (!Gate::allows('view-client', $client)) {
+            abort(403);
+        }
+
+        $client->load('bookings');
 
         return view('clients.show', ['client' => $client]);
     }
@@ -36,7 +41,7 @@ class ClientsController extends Controller
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
+        $client->address = $request->get('address');
         $client->city = $request->get('city');
         $client->postcode = $request->get('postcode');
         $client->save();
@@ -44,9 +49,13 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
+        if (! Gate::allows('delete-client', $client)) {
+            abort(403);
+        }
+
+        $client->delete();
 
         return 'Deleted';
     }

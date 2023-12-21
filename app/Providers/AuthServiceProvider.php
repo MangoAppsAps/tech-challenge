@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Client;
+use App\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -25,6 +27,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        $clientOwnershipCheck = function (User $user, Client $client) {
+            return $user->id === $client->user_id;
+        };
+
+        Gate::define('view-client', $clientOwnershipCheck);
+        Gate::define('delete-client', $clientOwnershipCheck);
     }
 }
