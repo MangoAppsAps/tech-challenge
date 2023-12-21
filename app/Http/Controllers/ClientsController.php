@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\User;
 use Illuminate\Http\Request;
 
 class ClientsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $clients = Client::all();
+        /** @var User $currentUser */
+        $currentUser = $request->user();
 
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
+        /** @var Client[] $clients */
+        $clients = $currentUser->clients()->withCount('bookings')->get();
 
         return view('clients.index', ['clients' => $clients]);
     }
