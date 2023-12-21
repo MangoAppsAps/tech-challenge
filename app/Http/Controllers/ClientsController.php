@@ -51,11 +51,12 @@ class ClientsController extends Controller
     {
         /** @var User $currentUser */
         $currentUser = $request->user();
+
+        $this->validateOwnership($currentUser, $client);
+
         $currentUser->clients()
             ->where('id', $client->id)
             ->delete();
-
-        $this->validateOwnership($currentUser, $client);
 
         return redirect()
             ->route('clients.index')
