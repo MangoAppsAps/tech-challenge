@@ -13,7 +13,7 @@ class ClientsController extends Controller
         $clients = auth()->user()->clients;
 
         foreach ($clients as $client) {
-            $client->append('bookings_count');
+            $client->append('bookings_count', 'journals_count');
         }
 
         return view('clients.index', ['clients' => $clients]);
@@ -30,9 +30,14 @@ class ClientsController extends Controller
             abort(403);
         }
 
-        $client->load(['bookings' => function ($query) {
-            $query->orderBy('start', 'desc');
-        }]);
+        $client->load([
+            'bookings' => function ($query) {
+                $query->orderBy('start', 'desc');
+            },
+            'journals' => function ($query) {
+                $query->orderBy('date', 'desc');
+            },
+        ]);
 
         return view('clients.show', ['client' => $client]);
     }

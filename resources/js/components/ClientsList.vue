@@ -12,6 +12,7 @@
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Number of Bookings</th>
+                    <th>Number of Journals</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -21,6 +22,7 @@
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
                     <td>{{ client.bookings_count }}</td>
+                    <td>{{ client.journals_count }}</td>
                     <td>
                         <a class="btn btn-primary btn-sm" :href="`/clients/${client.id}`">View</a>
                         <button class="btn btn-danger btn-sm" @click="deleteClient(client, index)">Delete</button>

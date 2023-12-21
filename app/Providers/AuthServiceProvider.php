@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Client;
+use App\Journal;
 use App\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -33,5 +34,12 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('view-client', $clientOwnershipCheck);
         Gate::define('delete-client', $clientOwnershipCheck);
+        Gate::define('create-journal', $clientOwnershipCheck);
+
+        $journalOwnershipCheck = function (User $user, Journal $journal) {
+            return $user->id === $journal->client->user_id;
+        };
+
+        Gate::define('delete-journal', $journalOwnershipCheck);
     }
 }

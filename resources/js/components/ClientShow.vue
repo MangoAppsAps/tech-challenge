@@ -79,8 +79,10 @@
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
-
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <journals v-if="client.journals && client.journals.length" :client="client" />
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -89,14 +91,20 @@
 
 <script>
 import axios from 'axios';
+import Journals from './Journals.vue'
 
 export default {
     name: 'ClientShow',
+    components: { Journals },
 
-    props: ['client'],
+    props: ['client', 'tab'],
 
     mounted () {
         this.bookings = { ...this.client.bookings }
+        if (this.tab && ['bookings', 'journals'].includes(this.tab)) {
+            this.currentTab = this.tab
+            window.history.replaceState(null, '', window.location.pathname)
+        }
     },
 
     data() {
