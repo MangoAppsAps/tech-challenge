@@ -1,18 +1,21 @@
 {
     "private": true,
     "scripts": {
-        "dev": "npm run development",
+        "dev": "export NODE_OPTIONS=--openssl-legacy-provider && npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "watch": "npm run development -- --watch",
+        "watch": "export NODE_OPTIONS=--openssl-legacy-provider && npm run development -- --watch",
         "watch-poll": "npm run watch -- --watch-poll",
         "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
         "prod": "npm run production",
-        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --config=node_modules/laravel-mix/setup/webpack.config.js"
+        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "lint": "eslint --ext .vue --fix --ignore-path .gitignore ./resources"
     },
     "devDependencies": {
         "axios": "^0.19",
         "bootstrap": "^4.0.0",
         "cross-env": "^7.0",
+        "eslint": "^8.56.0",
+        "eslint-plugin-vue": "^9.19.2",
         "jquery": "^3.2",
         "laravel-mix": "^5.0.1",
         "lodash": "^4.17.19",
@@ -25,6 +28,7 @@
     },
     "dependencies": {
         "mix-tailwindcss": "^1.3.0",
+        "moment": "^2.29.4",
         "tailwindcss": "^2.1.4"
     }
 }

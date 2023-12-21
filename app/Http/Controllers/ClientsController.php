@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Http\Requests\StoreClientRequest;
+use App\User;
 use Illuminate\Http\Request;
 
 class ClientsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $clients = Client::all();
+        /** @var User $currentUser */
+        $currentUser = $request->user();
 
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
+        /** @var Client[] $clients */
+        $clients = $currentUser->clients()->withCount('bookings')->get();
 
         return view('clients.index', ['clients' => $clients]);
     }
@@ -23,31 +25,53 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Request $request, Client $client)
     {
-        $client = Client::where('id', $client)->first();
+        /** @var User $currentUser */
+        $currentUser = $request->user();
+
+        $this->validateOwnership($currentUser, $client);
+
+        $client->load([
+            'bookings' => function ($query) {
+                $query->orderBy('start', 'desc');
+            },
+            'journals' => function ($query) {
+                $query->orderBy('date', 'desc');
+            },
+        ]);
 
         return view('clients.show', ['client' => $client]);
     }
 
-    public function store(Request $request)
+    public function store(StoreClientRequest $request): Client
     {
-        $client = new Client;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
+        /** @var User $currentUser */
+        $currentUser = $request->user();
 
-        return $client;
+        return $currentUser->clients()->create($request->validated());
     }
 
-    public function destroy($client)
+    public function destroy(Request $request, Client $client)
     {
-        Client::where('id', $client)->delete();
+        /** @var User $currentUser */
+        $currentUser = $request->user();
 
-        return 'Deleted';
+        $this->validateOwnership($currentUser, $client);
+
+        $currentUser->clients()
+            ->where('id', $client->id)
+            ->delete();
+
+        return redirect()
+            ->route('clients.index')
+            ->setStatusCode(303);
+    }
+
+    private function validateOwnership(User $currentUser, Client $client): void
+    {
+        if ($currentUser->clients()->where('id', $client->id)->doesntExist()) {
+            abort(403);
+        }
     }
 }
