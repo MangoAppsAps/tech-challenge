@@ -39,6 +39,15 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
+                    <p>
+                        <label for="show">Show:</label>
+                        <select @change.prevent="setShow">
+                            <option value="all">All</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="past">Past</option>
+                        </select>
+                    </p>
+
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
@@ -49,7 +58,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in client.bookings" :key="booking.id" v-if="shouldShowBooking(booking)">
                                     <td>{{ formatBookingTime(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -89,12 +98,31 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            show: 'all',
         }
     },
 
     methods: {
         switchTab(newTab) {
             this.currentTab = newTab;
+        },
+
+        setShow(event) {
+            this.show = event.target.value;
+        },
+
+        shouldShowBooking(booking) {
+            if (this.show === 'all') {
+                return true;
+            }
+
+            if (this.show === 'upcoming') {
+                return moment(booking.start).isAfter(moment());
+            }
+
+            if (this.show === 'past') {
+                return moment(booking.start).isBefore(moment());
+            }
         },
 
         formatBookingTime(start, end) {
