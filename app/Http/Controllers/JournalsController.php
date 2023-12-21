@@ -32,7 +32,6 @@ class JournalsController extends Controller
         return $journal ? 'Success' : 'Failure';
     }
 
-
     public function destroy(Client $client, Journal $journal)
     {
         if (!Gate::allows('delete-journal', $journal)) {

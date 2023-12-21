@@ -120,8 +120,17 @@ export default {
             this.currentTab = newTab;
         },
 
-        deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
+        async deleteBooking(booking) {
+            try {
+                await axios.delete(`/clients/${this.client.id}/bookings/${booking.id}`)
+                let key = _.findKey(this.bookings, { id: booking.id })
+                if (key) {
+                    this.client.bookings.splice(key, 1)
+                    this.applyFilter()
+                }
+            } catch (e) {
+                console.log(e)
+            }
         },
 
         applyFilter(filter) {

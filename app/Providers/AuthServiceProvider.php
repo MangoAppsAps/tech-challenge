@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Booking;
 use App\Client;
 use App\Journal;
 use App\User;
@@ -41,5 +42,11 @@ class AuthServiceProvider extends ServiceProvider
         };
 
         Gate::define('delete-journal', $journalOwnershipCheck);
+
+        $bookingOwnershipCheck = function (User $user, Booking $booking) {
+            return $user->id === $booking->client->user_id;
+        };
+
+        Gate::define('delete-booking', $bookingOwnershipCheck);
     }
 }

@@ -20,6 +20,11 @@ class Booking extends Model
 
     protected $appends = ['date', 'timeframe', 'start_stamp'];
 
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
     public function getDateAttribute()
     {
         return $this->start->format('l d F Y');
