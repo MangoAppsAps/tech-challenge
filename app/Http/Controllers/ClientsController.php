@@ -47,10 +47,16 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Request $request, Client $client)
     {
-        Client::where('id', $client)->delete();
+        /** @var User $currentUser */
+        $currentUser = $request->user();
+        $currentUser->clients()
+            ->where('id', $client->id)
+            ->delete();
 
-        return 'Deleted';
+        return redirect()
+            ->route('clients.index')
+            ->setStatusCode(303);
     }
 }
