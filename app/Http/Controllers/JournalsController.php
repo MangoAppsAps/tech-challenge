@@ -24,7 +24,7 @@ class JournalsController extends Controller
         }
 
         $data = $request->validate([
-            'date' => 'required|date_format:Y-m-d',
+            'date' => 'required|date_format:Y-m-d|after:-100 years|before:+50 years',
         ]);
 
         $journal = $client->journals()->create($data);
