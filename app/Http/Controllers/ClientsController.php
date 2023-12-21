@@ -30,7 +30,9 @@ class ClientsController extends Controller
             abort(403);
         }
 
-        $client->load('bookings');
+        $client->load(['bookings' => function ($query) {
+            $query->orderBy('start', 'desc');
+        }]);
 
         return view('clients.show', ['client' => $client]);
     }

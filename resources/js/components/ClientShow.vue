@@ -38,24 +38,30 @@
                 <!-- Bookings -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
-
+                    <div>
+                        <select v-model="filter" class="shadow-sm border border-gray-500 p-2 mb-4 bg-transparent">
+                            <option value="all">All bookings</option>
+                            <option value="future">Future bookings only</option>
+                            <option value="past">Past bookings only</option>
+                        </select>
+                    </div>
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Time</th>
-                                    <th>Notes</th>
+                                    <th class="px-2">Notes</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>
+                                <tr v-for="booking in bookings" :key="booking.id" class="border-bottom border-gray-500">
+                                    <td class="text-nowrap">
                                         {{ booking.date }},
                                         <br />
                                         {{ booking.timeframe }}
                                     </td>
-                                    <td>{{ booking.notes }}</td>
+                                    <td class="px-2">{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
                                     </td>
@@ -89,9 +95,15 @@ export default {
 
     props: ['client'],
 
+    mounted () {
+        this.bookings = { ...this.client.bookings }
+    },
+
     data() {
         return {
             currentTab: 'bookings',
+            filter: 'all',
+            bookings: [],
         }
     },
 
@@ -102,6 +114,26 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+
+        applyFilter(filter) {
+            let currentTime = Date.now() / 1000
+            switch (filter) {
+                case 'future':
+                    this.bookings = this.client.bookings.filter(booking => booking.start_stamp > currentTime)
+                break
+                case 'past':
+                    this.bookings = this.client.bookings.filter(booking => booking.start_stamp <= currentTime)
+                break
+                default:
+                    this.bookings = { ...this.client.bookings }
+                break
+            }
+        }
+    },
+    watch: {
+        filter (val) {
+            this.applyFilter(val)
         }
     }
 }

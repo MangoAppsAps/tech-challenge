@@ -18,7 +18,7 @@ class Booking extends Model
         'end',
     ];
 
-    protected $appends = ['date', 'timeframe'];
+    protected $appends = ['date', 'timeframe', 'start_stamp'];
 
     public function getDateAttribute()
     {
@@ -28,5 +28,10 @@ class Booking extends Model
     public function getTimeframeAttribute()
     {
         return $this->start->format('H:i') . ' to ' . $this->end->format('H:i');
+    }
+
+    public function getStartStampAttribute()
+    {
+        return $this->start->format('U');
     }
 }
