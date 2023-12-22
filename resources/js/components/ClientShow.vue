@@ -77,7 +77,30 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <template v-if="client.journals && client.journals.length > 0">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Content</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="journal in client.journals" :key="journal.id">
+                                    <td>{{ journal.date }}</td>
+                                    <td>{{ journal.content }}</td>  
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" @click="deleteJournal(journal)">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -113,6 +136,10 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
+        },
+
+        deleteJournal(journal) {
+            axios.delete(`/clients/${this.client.id}/journals/${journal.id}`);
         },
 
         filterBookings() {
