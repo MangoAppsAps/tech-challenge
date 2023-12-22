@@ -2,6 +2,14 @@
     <div>
         <h1 class="mb-6">Clients -> Add New Client</h1>
 
+        <div v-if="showErrors" class="alert alert-danger">
+            <ul>
+                <li v-for="(messages, field) in validationErrors" :key="field">
+                    {{ messages.join(', ') }}
+                </li>
+            </ul>
+        </div>
+
         <div class="max-w-lg mx-auto">
             <div class="form-group">
                 <label for="name">Name</label>
@@ -53,7 +61,9 @@ export default {
                 address: '',
                 city: '',
                 postcode: '',
-            }
+            },
+            validationErrors: {},
+            showErrors: false,
         }
     },
 
@@ -62,6 +72,11 @@ export default {
             axios.post('/clients', this.client)
                 .then((data) => {
                     window.location.href = data.data.url;
+                }).catch((error) => {
+                    if (error.response && error.response.status === 422) {
+                        this.validationErrors = error.response.data.errors;
+                        this.showErrors = true;
+                    }
                 });
         }
     }

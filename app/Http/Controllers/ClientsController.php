@@ -49,7 +49,19 @@ class ClientsController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:190',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|regex:/^[0-9\s+]+$/',
+            'phone' => 'required_without:email',
+            'email' => 'required_without:phone',
+        ], [
+            'phone.regex' => 'The phone can only contain digits, spaces and a plus sign.',
+        ]);
+
+        $userId = auth()->id();
         $client = new Client;
+        $client->user_id = $userId;
         $client->name = $request->get('name');
         $client->email = $request->get('email');
         $client->phone = $request->get('phone');

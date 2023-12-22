@@ -1962,6 +1962,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientForm',
@@ -1974,13 +1982,22 @@ __webpack_require__.r(__webpack_exports__);
         address: '',
         city: '',
         postcode: ''
-      }
+      },
+      validationErrors: {},
+      showErrors: false
     };
   },
   methods: {
     storeClient: function storeClient() {
+      var _this = this;
+
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client).then(function (data) {
         window.location.href = data.data.url;
+      })["catch"](function (error) {
+        if (error.response && error.response.status === 422) {
+          _this.validationErrors = error.response.data.errors;
+          _this.showErrors = true;
+        }
       });
     }
   }
@@ -38665,6 +38682,24 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("h1", { staticClass: "mb-6" }, [_vm._v("Clients -> Add New Client")]),
+    _vm._v(" "),
+    _vm.showErrors
+      ? _c("div", { staticClass: "alert alert-danger" }, [
+          _c(
+            "ul",
+            _vm._l(_vm.validationErrors, function(messages, field) {
+              return _c("li", { key: field }, [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(messages.join(", ")) +
+                    "\n            "
+                )
+              ])
+            }),
+            0
+          )
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "max-w-lg mx-auto" }, [
       _c("div", { staticClass: "form-group" }, [
