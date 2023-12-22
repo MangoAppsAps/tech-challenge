@@ -68,15 +68,16 @@ class ClientsController extends Controller
         ]);
 
         $userId = auth()->id();
-        $client = new Client;
-        $client->user_id = $userId;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->address = $request->get('address');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
+
+        $client = Client::create([
+            'user_id' => $userId,
+            'name' => $request->get('name'),
+            'email' => $request->get('email'),
+            'phone' => $request->get('phone'),
+            'address' => $request->get('address'),
+            'city' => $request->get('city'),
+            'postcode' => $request->get('postcode'),
+        ]);
 
         return $client;
     }
