@@ -34,7 +34,9 @@ class ClientsController extends Controller
                 ['id', $client],
                 ['user_id', $userId]
             ])
-            ->with('bookings')
+            ->with(['bookings' => function ($query) {
+                $query->orderBy('start', 'asc');
+            }])
             ->first();
 
         if($client != null) {
