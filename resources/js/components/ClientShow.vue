@@ -75,7 +75,10 @@
 
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
-                    <h3 class="mb-3">List of client journals</h3>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h3 class="mb-3">List of client journals</h3>
+                        <a :href="`/clients/${client.id}/journals/create`" class="float-right btn btn-primary">+ New Journal</a>
+                    </div>
 
                     <template v-if="journalsCopy && journalsCopy.length > 0">
                         <table>

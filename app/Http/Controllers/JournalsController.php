@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Client;
 use App\Journal;
 use Illuminate\Http\Request;
 
@@ -22,9 +23,23 @@ class JournalsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($client)
     {
-        //
+        $userId = auth()->id();
+
+        // Check if client exists and is associated with the user
+        $clientExists = Client::where([
+            ['id', '=', $client],
+            ['user_id', '=', $userId]
+        ])->exists();
+
+        if($clientExists == false) {
+            abort(404);
+        }
+
+        return view('journals.create', [
+            'clientId' => $client
+        ]);
     }
 
     /**
