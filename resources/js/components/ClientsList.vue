@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr v-for="client in clientsCopy" :key="client.id">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
@@ -39,9 +39,23 @@ export default {
 
     props: ['clients'],
 
+    data() {
+        return {
+            clientsCopy: [],
+        };
+    },
+
+    created() {
+        this.clientsCopy = [...this.clients];
+    },
+
     methods: {
-        deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+        async deleteClient(client) {
+            const response = await axios.delete(`/clients/${client.id}`);
+
+            if(response.status == 200 && response.data == "Deleted") {
+                this.clientsCopy = this.clientsCopy.filter(c => c.id !== client.id);
+            }
         }
     }
 }

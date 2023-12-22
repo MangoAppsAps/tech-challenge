@@ -39,7 +39,14 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <label for="filter-bookings">Booking filters</label>
+                    <select id="filter-bookings" v-model="selectedFilter" @change="filterBookings">
+                        <option value="allBookings">All bookings</option>
+                        <option value="futureBookings">Future bookings only</option>
+                        <option value="pastBookings">Past bookings only</option>
+                    </select>
+
+                    <template v-if="filteredBookings && filteredBookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,8 +56,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                <tr v-for="booking in filteredBookings" :key="booking.id">
+                                    <td>{{ booking.readable_start_date }} to {{ booking.readable_end_date }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -68,9 +75,35 @@
 
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
-                    <h3 class="mb-3">List of client journals</h3>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h3 class="mb-3">List of client journals</h3>
+                        <a :href="`/clients/${client.id}/journals/create`" class="float-right btn btn-primary">+ New Journal</a>
+                    </div>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <template v-if="journalsCopy && journalsCopy.length > 0">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Content</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="journal in journalsCopy" :key="journal.id">
+                                    <td>{{ journal.date }}</td>
+                                    <td>{{ journal.content }}</td>  
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" @click="deleteJournal(journal)">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -88,7 +121,17 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            allBookings: [],
+            filteredBookings: [],
+            selectedFilter: 'allBookings',
+            journalsCopy: []
         }
+    },
+
+    created() {
+        this.allBookings = this.client.bookings || [];
+        this.filteredBookings = this.allBookings;
+        this.journalsCopy = [...this.client.journals];
     },
 
     methods: {
@@ -98,7 +141,27 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
-        }
+        },
+
+        async deleteJournal(journal) {
+            const response = await axios.delete(`/clients/${this.client.id}/journals/delete/${journal.id}`);
+
+            if(response.status == 200 && response.data == "Deleted") {
+                this.journalsCopy = this.journalsCopy.filter(j => j.id !== journal.id);
+            }
+        },
+
+        filterBookings() {
+            const currentDate = new Date();
+
+            if(this.selectedFilter == 'allBookings') {
+                this.filteredBookings = this.allBookings;
+            } else if (this.selectedFilter === 'futureBookings') {
+                this.filteredBookings = this.allBookings.filter(booking => new Date(booking.start) >= currentDate);
+            } else if (this.selectedFilter === 'pastBookings') {
+                this.filteredBookings = this.allBookings.filter(booking => new Date(booking.start) < currentDate);
+            }
+        },
     }
 }
 </script>
