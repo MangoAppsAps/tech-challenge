@@ -13,6 +13,7 @@ class Client extends Model
         'adress',
         'city',
         'postcode',
+        'user_id'
     ];
 
     protected $appends = [
@@ -32,5 +33,10 @@ class Client extends Model
     public function getUrlAttribute()
     {
         return "/clients/" . $this->id;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
