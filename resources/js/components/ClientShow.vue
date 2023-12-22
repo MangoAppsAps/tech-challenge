@@ -39,7 +39,14 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <label for="filter-bookings">Booking filters</label>
+                    <select id="filter-bookings" v-model="selectedFilter" @change="filterBookings">
+                        <option value="allBookings">All bookings</option>
+                        <option value="futureBookings">Future bookings only</option>
+                        <option value="pastBookings">Past bookings only</option>
+                    </select>
+
+                    <template v-if="filteredBookings && filteredBookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -49,7 +56,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in filteredBookings" :key="booking.id">
                                     <td>{{ booking.readable_start_date }} to {{ booking.readable_end_date }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -88,7 +95,15 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            allBookings: [],
+            filteredBookings: [],
+            selectedFilter: 'allBookings'
         }
+    },
+
+    created() {
+        this.allBookings = this.client.bookings || [];
+        this.filteredBookings = this.allBookings;
     },
 
     methods: {
@@ -98,7 +113,19 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
-        }
+        },
+
+        filterBookings() {
+            const currentDate = new Date();
+
+            if(this.selectedFilter == 'allBookings') {
+                this.filteredBookings = this.allBookings;
+            } else if (this.selectedFilter === 'futureBookings') {
+                this.filteredBookings = this.allBookings.filter(booking => new Date(booking.start) >= currentDate);
+            } else if (this.selectedFilter === 'pastBookings') {
+                this.filteredBookings = this.allBookings.filter(booking => new Date(booking.start) < currentDate);
+            }
+        },
     }
 }
 </script>
