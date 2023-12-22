@@ -38147,9 +38147,9 @@ var render = function() {
                             return _c("tr", { key: booking.id }, [
                               _c("td", [
                                 _vm._v(
-                                  _vm._s(booking.start) +
-                                    " - " +
-                                    _vm._s(booking.end)
+                                  _vm._s(booking.readable_start_date) +
+                                    " to " +
+                                    _vm._s(booking.readable_end_date)
                                 )
                               ]),
                               _vm._v(" "),

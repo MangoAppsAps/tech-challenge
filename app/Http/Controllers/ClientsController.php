@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ClientsController extends Controller
@@ -29,6 +30,13 @@ class ClientsController extends Controller
             ->with('bookings')
             ->first();
 
+        if($client != null) {
+            foreach($client->bookings as $booking) {
+                $booking->readable_start_date = Carbon::parse($booking->start)->isoFormat('dddd D MMMM YYYY, HH:mm');
+                $booking->readable_end_date = Carbon::parse($booking->end)->isoFormat('HH:mm');
+            }
+        }
+        
         return view('clients.show', ['client' => $client]);
     }
 
