@@ -2014,8 +2014,28 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -2134,22 +2154,50 @@ __webpack_require__.r(__webpack_exports__);
       currentTab: 'bookings',
       allBookings: [],
       filteredBookings: [],
-      selectedFilter: 'allBookings'
+      selectedFilter: 'allBookings',
+      journalsCopy: []
     };
   },
   created: function created() {
     this.allBookings = this.client.bookings || [];
     this.filteredBookings = this.allBookings;
+    this.journalsCopy = _toConsumableArray(this.client.journals);
   },
   methods: {
     switchTab: function switchTab(newTab) {
       this.currentTab = newTab;
     },
     deleteBooking: function deleteBooking(booking) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/bookings/".concat(booking.id));
     },
     deleteJournal: function deleteJournal(journal) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(this.client.id, "/journals/").concat(journal.id));
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/clients/".concat(_this.client.id, "/journals/").concat(journal.id));
+
+              case 2:
+                response = _context.sent;
+
+                if (response.status == 200 && response.data == "Deleted") {
+                  _this.journalsCopy = _this.journalsCopy.filter(function (j) {
+                    return j.id !== journal.id;
+                  });
+                }
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
     },
     filterBookings: function filterBookings() {
       var currentDate = new Date();
@@ -39159,14 +39207,14 @@ var render = function() {
                   _vm._v("List of client journals")
                 ]),
                 _vm._v(" "),
-                _vm.client.journals && _vm.client.journals.length > 0
+                _vm.journalsCopy && _vm.journalsCopy.length > 0
                   ? [
                       _c("table", [
                         _vm._m(1),
                         _vm._v(" "),
                         _c(
                           "tbody",
-                          _vm._l(_vm.client.journals, function(journal) {
+                          _vm._l(_vm.journalsCopy, function(journal) {
                             return _c("tr", { key: journal.id }, [
                               _c("td", [_vm._v(_vm._s(journal.date))]),
                               _vm._v(" "),

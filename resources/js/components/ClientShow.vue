@@ -77,7 +77,7 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
 
-                    <template v-if="client.journals && client.journals.length > 0">
+                    <template v-if="journalsCopy && journalsCopy.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -87,7 +87,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="journal in client.journals" :key="journal.id">
+                                <tr v-for="journal in journalsCopy" :key="journal.id">
                                     <td>{{ journal.date }}</td>
                                     <td>{{ journal.content }}</td>  
                                     <td>
@@ -120,13 +120,15 @@ export default {
             currentTab: 'bookings',
             allBookings: [],
             filteredBookings: [],
-            selectedFilter: 'allBookings'
+            selectedFilter: 'allBookings',
+            journalsCopy: []
         }
     },
 
     created() {
         this.allBookings = this.client.bookings || [];
         this.filteredBookings = this.allBookings;
+        this.journalsCopy = [...this.client.journals];
     },
 
     methods: {
@@ -138,8 +140,12 @@ export default {
             axios.delete(`/bookings/${booking.id}`);
         },
 
-        deleteJournal(journal) {
-            axios.delete(`/clients/${this.client.id}/journals/${journal.id}`);
+        async deleteJournal(journal) {
+            const response = await axios.delete(`/clients/${this.client.id}/journals/${journal.id}`);
+
+            if(response.status == 200 && response.data == "Deleted") {
+                this.journalsCopy = this.journalsCopy.filter(j => j.id !== journal.id);
+            }
         },
 
         filterBookings() {
