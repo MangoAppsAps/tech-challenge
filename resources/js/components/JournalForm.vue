@@ -16,6 +16,11 @@
                 <input type="date" id="date" class="form-control" v-model="journal.date">
             </div>
 
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea class="form-control" placeholder="Add the content here" id="content" v-model="journal.content"></textarea>
+            </div>
+
             <div class="text-right">
                 <a :href="`/clients/${clientId}/journals/create`" class="btn btn-default">Cancel</a>
                 <button @click="storeJournal" class="btn btn-primary">Create</button>
@@ -46,9 +51,9 @@ export default {
 
     methods: {
         storeJournal() {
-            axios.post('/clients', this.client)
+            axios.post(`/clients/${this.clientId}/journals/create`, this.journal)
                 .then((data) => {
-                    window.location.href = data.data.url;
+                    window.location.href = `/clients/${this.clientId}`;
                 }).catch((error) => {
                     if (error.response && error.response.status === 422) {
                         this.validationErrors = error.response.data.errors;

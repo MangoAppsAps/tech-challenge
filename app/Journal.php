@@ -9,6 +9,10 @@ class Journal extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'date', 'content', 'client_id',
+    ];
+
     public function client()
     {
         return $this->belongsTo(Client::class);

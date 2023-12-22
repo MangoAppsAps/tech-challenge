@@ -2183,7 +2183,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/clients/".concat(_this.client.id, "/journals/").concat(journal.id));
+                return axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/clients/".concat(_this.client.id, "/journals/delete/").concat(journal.id));
 
               case 2:
                 response = _context.sent;
@@ -2403,6 +2403,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'JournalForm',
@@ -2422,8 +2427,8 @@ __webpack_require__.r(__webpack_exports__);
     storeJournal: function storeJournal() {
       var _this = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/clients', this.client).then(function (data) {
-        window.location.href = data.data.url;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/clients/".concat(this.clientId, "/journals/create"), this.journal).then(function (data) {
+        window.location.href = "/clients/".concat(_this.clientId);
       })["catch"](function (error) {
         if (error.response && error.response.status === 422) {
           _this.validationErrors = error.response.data.errors;
@@ -39594,6 +39599,32 @@ var render = function() {
                 return
               }
               _vm.$set(_vm.journal, "date", $event.target.value)
+            }
+          }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", { attrs: { for: "content" } }, [_vm._v("Content")]),
+        _vm._v(" "),
+        _c("textarea", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.journal.content,
+              expression: "journal.content"
+            }
+          ],
+          staticClass: "form-control",
+          attrs: { placeholder: "Add the content here", id: "content" },
+          domProps: { value: _vm.journal.content },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.journal, "content", $event.target.value)
             }
           }
         })

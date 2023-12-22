@@ -144,7 +144,7 @@ export default {
         },
 
         async deleteJournal(journal) {
-            const response = await axios.delete(`/clients/${this.client.id}/journals/${journal.id}`);
+            const response = await axios.delete(`/clients/${this.client.id}/journals/delete/${journal.id}`);
 
             if(response.status == 200 && response.data == "Deleted") {
                 this.journalsCopy = this.journalsCopy.filter(j => j.id !== journal.id);

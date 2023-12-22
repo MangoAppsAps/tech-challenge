@@ -48,9 +48,35 @@ class JournalsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $client)
     {
-        //
+        $request->validate([
+            'date' => 'required|date|date_format:Y-m-d',
+            'content' => 'required|string',
+        ]);
+
+        $userId = auth()->id();
+
+        // Check if client exists and is associated with the user
+
+        // NOTE FOR INTERVIEW: I've rechecked here because I wanted to keep the current structure of the endpoint
+        // Another posibility would have been to just add the client_id to the $request, and validate it above in the validate() method
+        $clientExists = Client::where([
+            ['id', '=', $client],
+            ['user_id', '=', $userId]
+        ])->exists();
+
+        if($clientExists == false) {
+            abort(404);
+        }
+
+        $journal = Journal::create([
+            'date' => $request->get('date'),
+            'content' => $request->get('content'),
+            'client_id' => $client
+        ]);
+
+        return $journal;
     }
 
     /**
