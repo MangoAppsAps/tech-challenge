@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Client;
+use App\Http\Requests\CreateClientRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,23 +29,18 @@ class ClientsController extends Controller
 
     public function show(Client $client)
     {
-        $client->loadMissing('bookings');
+        $client = $client->load(['bookings' => function ($query) {
+            $query->orderBy('start', 'desc');
+        }]);
 
         return view('clients.show', ['client' => $client]);
     }
 
-    public function store(Request $request)
+    public function store(CreateClientRequest $request)
     {
-        $client = new Client;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
+        $user = Auth::user();
 
-        return $client;
+        return $user->clients()->create($request->validated());
     }
 
     public function destroy(Client $client)

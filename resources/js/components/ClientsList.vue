@@ -37,13 +37,26 @@ import axios from 'axios';
 export default {
     name: 'ClientsList',
 
-    props: ['clients'],
+    props: {
+        clients: Array
+    },
+
+    data() {
+        return {
+            toast: {
+                show: false,
+                success: true,
+                message: ''
+            }
+        };
+    },
 
     methods: {
         async deleteClient(client) {
             try {
-                const result = await axios.delete(`/clients/30`);
-                alert(result);
+                await axios.delete(`/clients/${client.id}`);
+
+                this.clients = this.clients.filter(c => c.id !== client.id);
             } catch(error) {
                 const errorMessage = error.response.data?.error ?? error.message;
                 console.log(errorMessage);

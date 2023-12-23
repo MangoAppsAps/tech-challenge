@@ -2160,11 +2160,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientsList',
-  props: ['clients'],
+  props: {
+    clients: Array
+  },
+  data: function data() {
+    return {
+      toast: {
+        show: false,
+        success: true,
+        message: ''
+      }
+    };
+  },
   methods: {
     deleteClient: function deleteClient(client) {
+      var _this = this;
+
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var result, _error$response$data$, _error$response$data, errorMessage;
+        var _error$response$data$, _error$response$data, errorMessage;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
@@ -2172,26 +2185,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/clients/30");
+                return axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/clients/".concat(client.id));
 
               case 3:
-                result = _context.sent;
-                alert(result);
-                _context.next = 11;
+                _this.clients = _this.clients.filter(function (c) {
+                  return c.id !== client.id;
+                });
+                _context.next = 10;
                 break;
 
-              case 7:
-                _context.prev = 7;
+              case 6:
+                _context.prev = 6;
                 _context.t0 = _context["catch"](0);
                 errorMessage = (_error$response$data$ = (_error$response$data = _context.t0.response.data) === null || _error$response$data === void 0 ? void 0 : _error$response$data.error) !== null && _error$response$data$ !== void 0 ? _error$response$data$ : _context.t0.message;
                 console.log(errorMessage);
 
-              case 11:
+              case 10:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 7]]);
+        }, _callee, null, [[0, 6]]);
       }))();
     }
   }
