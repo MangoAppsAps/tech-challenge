@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $user = Auth::user();
+
+        $clients = $user->clients;
 
         foreach ($clients as $client) {
             $client->append('bookings_count');
