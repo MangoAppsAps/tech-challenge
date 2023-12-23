@@ -47,10 +47,16 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
+        $user = Auth::user();
 
-        return 'Deleted';
+        if ($user->id === $client->user_id) {
+            $client->delete();
+
+            return response()->json([]);
+        }
+
+        return response()->json(['error' => 'Cannot delete this client'], 400);
     }
 }
