@@ -2001,6 +2001,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2087,8 +2102,12 @@ __webpack_require__.r(__webpack_exports__);
   props: ['client'],
   data: function data() {
     return {
-      currentTab: 'bookings'
+      currentTab: 'bookings',
+      bookings: []
     };
+  },
+  mounted: function mounted() {
+    this.bookings = _objectSpread({}, this.client.bookings);
   },
   methods: {
     switchTab: function switchTab(newTab) {
@@ -2099,6 +2118,27 @@ __webpack_require__.r(__webpack_exports__);
     },
     formatBookingDate: function formatBookingDate(date, format) {
       return moment__WEBPACK_IMPORTED_MODULE_1___default()(date).format(format);
+    },
+    filterBookings: function filterBookings(event) {
+      var filter = event.target.value;
+
+      if (filter === 'all') {
+        this.bookings = _objectSpread({}, this.client.bookings);
+      }
+
+      var now = moment__WEBPACK_IMPORTED_MODULE_1___default()();
+
+      if (filter === 'future') {
+        this.bookings = this.client.bookings.filter(function (booking) {
+          return moment__WEBPACK_IMPORTED_MODULE_1___default()(booking.start) > now;
+        });
+      }
+
+      if (filter === 'past') {
+        this.bookings = this.client.bookings.filter(function (booking) {
+          return moment__WEBPACK_IMPORTED_MODULE_1___default()(booking.start) < now;
+        });
+      }
     }
   }
 });
@@ -60691,6 +60731,34 @@ var render = function() {
                   _vm._v("List of client bookings")
                 ]),
                 _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "booking-filter" } }, [
+                    _vm._v("Filter bookings")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      staticClass: "form-control",
+                      attrs: { id: "booking-filter" },
+                      on: { change: _vm.filterBookings }
+                    },
+                    [
+                      _c("option", { attrs: { selected: "", value: "all" } }, [
+                        _vm._v("All bookings")
+                      ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "future" } }, [
+                        _vm._v("Future bookings only")
+                      ]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "past" } }, [
+                        _vm._v("Past bookings only")
+                      ])
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
                 _vm.client.bookings && _vm.client.bookings.length > 0
                   ? [
                       _c("table", [
@@ -60698,7 +60766,7 @@ var render = function() {
                         _vm._v(" "),
                         _c(
                           "tbody",
-                          _vm._l(_vm.client.bookings, function(booking) {
+                          _vm._l(_vm.bookings, function(booking) {
                             return _c("tr", { key: booking.id }, [
                               _c("td", [
                                 _vm._v(

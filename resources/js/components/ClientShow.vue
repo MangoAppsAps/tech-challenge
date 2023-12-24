@@ -39,6 +39,15 @@
                 <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
                     <h3 class="mb-3">List of client bookings</h3>
 
+                    <div class="form-group">
+                        <label for="booking-filter">Filter bookings</label>
+                        <select class="form-control" id="booking-filter" @change="filterBookings">
+                            <option selected value="all">All bookings</option>
+                            <option value="future">Future bookings only</option>
+                            <option value="past">Past bookings only</option>
+                        </select>
+                    </div>
+
                     <template v-if="client.bookings && client.bookings.length > 0">
                         <table>
                             <thead>
@@ -49,7 +58,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
+                                <tr v-for="booking in bookings" :key="booking.id">
                                     <td>{{ formatBookingDate(booking.start, 'dddd D MMMM YYYY, HH:mm') }} to {{ formatBookingDate(booking.end, 'HH:mm') }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
@@ -89,7 +98,12 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            bookings: []
         }
+    },
+
+    mounted() {
+        this.bookings = { ...this.client.bookings };
     },
 
     methods: {
@@ -103,6 +117,21 @@ export default {
 
         formatBookingDate(date, format) {
             return moment(date).format(format);
+        },
+
+        filterBookings(event) {
+            const filter = event.target.value;
+            if (filter === 'all') {
+                this.bookings = { ...this.client.bookings }
+            }
+
+            const now = moment();
+            if (filter === 'future') {
+                this.bookings = this.client.bookings.filter(booking => moment(booking.start) > now);
+            }
+            if (filter === 'past') {
+                this.bookings = this.client.bookings.filter(booking => moment(booking.start) < now);
+            }
         }
     }
 }
