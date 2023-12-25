@@ -6,6 +6,9 @@
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" class="form-control" v-model="client.name">
+                <div class="invalid-feedback">
+                    Please provide a valid zip.
+                </div>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -53,16 +56,33 @@ export default {
                 address: '',
                 city: '',
                 postcode: '',
-            }
+            },
+            errors: {},
         }
     },
 
     methods: {
-        storeClient() {
-            axios.post('/clients', this.client)
-                .then((data) => {
-                    window.location.href = data.data.url;
-                });
+        async storeClient() {
+            try {
+                this.errors = {};
+
+                const result = await axios.post('/clients', this.client)
+
+                window.location.href = result.data.url;
+            } catch (error) {
+                if (error.response && error.response.data && error.response.data.errors) {
+                    // Handle backend validation errors
+                    this.errors = error.response.data.errors;
+                    console.log(this.errors);
+                } else {
+                    // Handle other errors (e.g., network issues)
+                    console.error(error);
+                }
+            }
+        },
+
+        hasErrors(field) {
+            return field in this.errors;
         }
     }
 }

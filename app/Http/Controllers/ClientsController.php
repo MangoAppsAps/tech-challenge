@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use App\Http\Requests\CreateClientRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ClientsController extends Controller
 {
@@ -29,9 +29,18 @@ class ClientsController extends Controller
 
     public function show(Client $client)
     {
-        $client = $client->load(['bookings' => function ($query) {
-            $query->orderBy('start', 'desc');
-        }]);
+        if (!Gate::allows('show-client', $client)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $client = $client->load([
+            'bookings' => function ($query) {
+                $query->orderBy('start', 'desc');
+            },
+            'journals' => function ($query) {
+                $query->orderBy('date', 'desc');
+            }
+        ]);
 
         return view('clients.show', ['client' => $client]);
     }
@@ -45,6 +54,10 @@ class ClientsController extends Controller
 
     public function destroy(Client $client)
     {
+        if (!Gate::allows('delete-client', $client)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $user = Auth::user();
 
         if ($user->id === $client->user_id) {

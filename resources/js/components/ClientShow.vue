@@ -48,7 +48,7 @@
                         </select>
                     </div>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <template v-if="bookings && bookings.length > 0">
                         <table>
                             <thead>
                                 <tr>
@@ -59,7 +59,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="booking in bookings" :key="booking.id">
-                                    <td>{{ formatBookingDate(booking.start, 'dddd D MMMM YYYY, HH:mm') }} to {{ formatBookingDate(booking.end, 'HH:mm') }}</td>
+                                    <td>{{ formatDate(booking.start, 'dddd D MMMM YYYY, HH:mm') }} to {{ formatDate(booking.end, 'HH:mm') }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -78,8 +78,37 @@
                 <!-- Journals -->
                 <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
+                    <button @click="showJournalForm = true"
+                        class="btn btn-danger btn-sm mb-4" >Create journal</button>
 
-                    <p>(BONUS) TODO: implement this feature</p>
+                    <template>
+                        <JournalForm v-if="showJournalForm" @submit="createJournal"></JournalForm>
+                    </template>
+
+                    <template v-if="journals && journals.length > 0">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Journal text</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="journal in journals" :key="journal.id">
+                                <td>{{ formatDate(journal.time, 'dddd D MMMM YYYY') }}</td>
+                                <td>{{ journal.text }}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" @click="deleteJournal(journal)">Delete</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <template v-else>
+                        <p class="text-center">The client has no journals.</p>
+                    </template>
                 </div>
             </div>
         </div>
@@ -89,6 +118,7 @@
 <script>
 import axios from 'axios';
 import moment from "moment";
+import JournalForm from "./JournalForm";
 
 export default {
     name: 'ClientShow',
@@ -98,12 +128,19 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
-            bookings: []
+            bookings: [],
+            journals: [],
+            showJournalForm: false,
         }
     },
 
     mounted() {
-        this.bookings = { ...this.client.bookings };
+        this.bookings = [ ...this.client.bookings ];
+        this.journals = [ ...this.client.journals ];
+    },
+
+    components: {
+        JournalForm,
     },
 
     methods: {
@@ -115,7 +152,17 @@ export default {
             axios.delete(`/bookings/${booking.id}`);
         },
 
-        formatBookingDate(date, format) {
+        createJournal(journal) {
+            console.log(journal)
+            axios.post(`/clients/${this.client.id}/journals`, journal);
+            this.showJournalForm = false;
+        },
+
+        deleteJournal(journal) {
+            axios.delete(`/clients/${this.client.id}/journals/${journal.id}`);
+        },
+
+        formatDate(date, format) {
             return moment(date).format(format);
         },
 

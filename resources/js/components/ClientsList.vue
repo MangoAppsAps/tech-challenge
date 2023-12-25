@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr v-for="client in clientsList" :key="client.id">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
@@ -47,8 +47,13 @@ export default {
                 show: false,
                 success: true,
                 message: ''
-            }
+            },
+            clientsList: []
         };
+    },
+
+    mounted() {
+        this.clientsList = [ ...this.clients ];
     },
 
     methods: {
@@ -56,10 +61,14 @@ export default {
             try {
                 await axios.delete(`/clients/${client.id}`);
 
-                this.clients = this.clients.filter(c => c.id !== client.id);
+                this.clientsList = this.clientsList.filter(c => c.id !== client.id);
             } catch(error) {
-                const errorMessage = error.response.data?.error ?? error.message;
-                console.log(errorMessage);
+                if (error?.response?.data?.error) {
+                    const errorMessage = error.response.data.error;
+                    console.log(errorMessage);
+                } else {
+                    console.log(error.message);
+                }
             }
         }
     }
