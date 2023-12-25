@@ -15,7 +15,7 @@ class CreateClientRequest extends FormRequest
     {
         return [
             'name' => 'required|max:190',
-            'email' => 'required_without:phone|sometimes|nullable|email:dns',
+            'email' => 'required_without:phone|sometimes|nullable|email:dns|unique:App\User,email',
             'phone' => 'required_without:email|regex:/^[0-9+\s]+$/|min:6',
             'address' => 'sometimes|nullable',
             'city' => 'sometimes|nullable',

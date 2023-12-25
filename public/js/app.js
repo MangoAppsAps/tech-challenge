@@ -2059,6 +2059,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _components_Toast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Toast */ "./resources/js/components/Toast.vue");
+/* harmony import */ var _mixins_toast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../mixins/toast */ "./resources/js/mixins/toast.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -2108,9 +2110,42 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientForm',
+  mixins: [_mixins_toast__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  components: {
+    Toast: _components_Toast__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
   data: function data() {
     return {
       client: {
@@ -2129,7 +2164,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var result;
+        var result, _error$response, _error$response$data;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -2149,13 +2185,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _context.prev = 8;
                 _context.t0 = _context["catch"](0);
 
-                if (_context.t0.response && _context.t0.response.data && _context.t0.response.data.errors) {
+                if ((_error$response = _context.t0.response) !== null && _error$response !== void 0 && (_error$response$data = _error$response.data) !== null && _error$response$data !== void 0 && _error$response$data.errors) {
                   // Handle backend validation errors
                   _this.errors = _context.t0.response.data.errors;
-                  console.log(_this.errors);
                 } else {
-                  // Handle other errors (e.g., network issues)
-                  console.error(_context.t0);
+                  _this.showToast(_context.t0.message, 'error');
                 }
 
               case 11:
@@ -2168,6 +2202,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     hasErrors: function hasErrors(field) {
       return field in this.errors;
+    },
+    getFieldErrors: function getFieldErrors(field) {
+      var errors = [];
+
+      if (this.hasErrors(field)) {
+        return this.errors[field];
+      }
+
+      return errors;
     }
   }
 });
@@ -61624,187 +61667,248 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("h1", { staticClass: "mb-6" }, [_vm._v("Clients -> Add New Client")]),
-    _vm._v(" "),
-    _c("div", { staticClass: "max-w-lg mx-auto" }, [
-      _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "name" } }, [_vm._v("Name")]),
-        _vm._v(" "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.client.name,
-              expression: "client.name"
-            }
-          ],
-          staticClass: "form-control",
-          attrs: { type: "text", id: "name" },
-          domProps: { value: _vm.client.name },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.client, "name", $event.target.value)
-            }
-          }
-        }),
-        _vm._v(" "),
-        _c("div", { staticClass: "invalid-feedback" }, [
-          _vm._v("\n                Please provide a valid zip.\n            ")
-        ])
-      ]),
+  return _c(
+    "div",
+    [
+      _c("h1", { staticClass: "mb-6" }, [_vm._v("Clients -> Add New Client")]),
       _vm._v(" "),
-      _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "email" } }, [_vm._v("Email")]),
-        _vm._v(" "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.client.email,
-              expression: "client.email"
-            }
-          ],
-          staticClass: "form-control",
-          attrs: { type: "text", id: "email" },
-          domProps: { value: _vm.client.email },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
+      _c("div", { staticClass: "max-w-lg mx-auto" }, [
+        _c(
+          "div",
+          { staticClass: "form-group" },
+          [
+            _c("label", { attrs: { for: "name" } }, [_vm._v("Name")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.client.name,
+                  expression: "client.name"
+                }
+              ],
+              staticClass: "form-control",
+              class: [_vm.hasErrors("name") ? "is-invalid" : ""],
+              attrs: { type: "text", id: "name" },
+              domProps: { value: _vm.client.name },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.client, "name", $event.target.value)
+                }
               }
-              _vm.$set(_vm.client, "email", $event.target.value)
-            }
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "phone" } }, [_vm._v("Phone")]),
-        _vm._v(" "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.client.phone,
-              expression: "client.phone"
-            }
+            }),
+            _vm._v(" "),
+            _vm._l(_vm.getFieldErrors("name"), function(error, index) {
+              return _c(
+                "div",
+                { key: index, staticClass: "invalid-feedback" },
+                [
+                  _vm._v(
+                    "\n                " + _vm._s(error) + "\n            "
+                  )
+                ]
+              )
+            })
           ],
-          staticClass: "form-control",
-          attrs: { type: "text", id: "phone" },
-          domProps: { value: _vm.client.phone },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.client, "phone", $event.target.value)
-            }
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "name" } }, [_vm._v("Address")]),
+          2
+        ),
         _vm._v(" "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.client.address,
-              expression: "client.address"
-            }
-          ],
-          staticClass: "form-control",
-          attrs: { type: "text", id: "address" },
-          domProps: { value: _vm.client.address },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
+        _c(
+          "div",
+          { staticClass: "form-group" },
+          [
+            _c("label", { attrs: { for: "email" } }, [_vm._v("Email")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.client.email,
+                  expression: "client.email"
+                }
+              ],
+              staticClass: "form-control",
+              class: [_vm.hasErrors("email") ? "is-invalid" : ""],
+              attrs: { type: "text", id: "email" },
+              domProps: { value: _vm.client.email },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.client, "email", $event.target.value)
+                }
               }
-              _vm.$set(_vm.client, "address", $event.target.value)
-            }
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "flex" }, [
-        _c("div", { staticClass: "form-group flex-1" }, [
-          _c("label", { attrs: { for: "city" } }, [_vm._v("City")]),
+            }),
+            _vm._v(" "),
+            _vm._l(_vm.getFieldErrors("email"), function(error, index) {
+              return _c(
+                "div",
+                { key: index, staticClass: "invalid-feedback" },
+                [
+                  _vm._v(
+                    "\n                " + _vm._s(error) + "\n            "
+                  )
+                ]
+              )
+            })
+          ],
+          2
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "form-group" },
+          [
+            _c("label", { attrs: { for: "phone" } }, [_vm._v("Phone")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.client.phone,
+                  expression: "client.phone"
+                }
+              ],
+              staticClass: "form-control",
+              class: [_vm.hasErrors("phone") ? "is-invalid" : ""],
+              attrs: { type: "text", id: "phone" },
+              domProps: { value: _vm.client.phone },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.client, "phone", $event.target.value)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _vm._l(_vm.getFieldErrors("phone"), function(error, index) {
+              return _c(
+                "div",
+                { key: index, staticClass: "invalid-feedback" },
+                [
+                  _vm._v(
+                    "\n                " + _vm._s(error) + "\n            "
+                  )
+                ]
+              )
+            })
+          ],
+          2
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "name" } }, [_vm._v("Address")]),
           _vm._v(" "),
           _c("input", {
             directives: [
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.client.city,
-                expression: "client.city"
+                value: _vm.client.address,
+                expression: "client.address"
               }
             ],
             staticClass: "form-control",
-            attrs: { type: "text", id: "city" },
-            domProps: { value: _vm.client.city },
+            attrs: { type: "text", id: "address" },
+            domProps: { value: _vm.client.address },
             on: {
               input: function($event) {
                 if ($event.target.composing) {
                   return
                 }
-                _vm.$set(_vm.client, "city", $event.target.value)
+                _vm.$set(_vm.client, "address", $event.target.value)
               }
             }
           })
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "form-group flex-1" }, [
-          _c("label", { attrs: { for: "postcode" } }, [_vm._v("Postcode")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.client.postcode,
-                expression: "client.postcode"
-              }
-            ],
-            staticClass: "form-control",
-            attrs: { type: "text", id: "postcode" },
-            domProps: { value: _vm.client.postcode },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
+        _c("div", { staticClass: "flex" }, [
+          _c("div", { staticClass: "form-group flex-1" }, [
+            _c("label", { attrs: { for: "city" } }, [_vm._v("City")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.client.city,
+                  expression: "client.city"
                 }
-                _vm.$set(_vm.client, "postcode", $event.target.value)
+              ],
+              staticClass: "form-control",
+              attrs: { type: "text", id: "city" },
+              domProps: { value: _vm.client.city },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.client, "city", $event.target.value)
+                }
               }
-            }
-          })
+            })
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-group flex-1" }, [
+            _c("label", { attrs: { for: "postcode" } }, [_vm._v("Postcode")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.client.postcode,
+                  expression: "client.postcode"
+                }
+              ],
+              staticClass: "form-control",
+              attrs: { type: "text", id: "postcode" },
+              domProps: { value: _vm.client.postcode },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.client, "postcode", $event.target.value)
+                }
+              }
+            })
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "text-right" }, [
+          _c(
+            "a",
+            { staticClass: "btn btn-default", attrs: { href: "/clients" } },
+            [_vm._v("Cancel")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            { staticClass: "btn btn-primary", on: { click: _vm.storeClient } },
+            [_vm._v("Create")]
+          )
         ])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "text-right" }, [
-        _c(
-          "a",
-          { staticClass: "btn btn-default", attrs: { href: "/clients" } },
-          [_vm._v("Cancel")]
-        ),
-        _vm._v(" "),
-        _c(
-          "button",
-          { staticClass: "btn btn-primary", on: { click: _vm.storeClient } },
-          [_vm._v("Create")]
-        )
-      ])
-    ])
-  ])
+      _vm.toast.show
+        ? _c("Toast", {
+            attrs: { message: _vm.toast.message, type: _vm.toast.type },
+            on: { closeToast: _vm.closeToast }
+          })
+        : _vm._e()
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -74869,7 +74973,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!**************************************************************************!*\
   !*** ./resources/js/pages/ClientForm.vue?vue&type=template&id=4ce839f8& ***!
   \**************************************************************************/
-/*! exports provided: render, staticRenderFns */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
