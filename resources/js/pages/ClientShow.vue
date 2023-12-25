@@ -204,7 +204,7 @@ export default {
         filterBookings(event) {
             const filter = event.target.value;
             if (filter === 'all') {
-                this.bookings = { ...this.client.bookings }
+                this.bookings = [ ...this.client.bookings ]
             }
 
             const now = moment();
