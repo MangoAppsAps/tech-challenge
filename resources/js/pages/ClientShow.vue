@@ -112,13 +112,16 @@
                 </div>
             </div>
         </div>
+        <Toast :toast="toast" :closeToast="closeToast"/>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
 import moment from "moment";
-import JournalForm from "./JournalForm";
+import JournalForm from "../components/JournalForm";
+import Toast from "../components/Toast";
+import useToast from '../composables/toast';
 
 export default {
     name: 'ClientShow',
@@ -131,6 +134,11 @@ export default {
             bookings: [],
             journals: [],
             showJournalForm: false,
+            toast: {
+                message: '',
+                type: 'success',
+                show: false
+            }
         }
     },
 
@@ -141,6 +149,7 @@ export default {
 
     components: {
         JournalForm,
+        Toast,
     },
 
     methods: {
@@ -153,9 +162,12 @@ export default {
         },
 
         createJournal(journal) {
-            console.log(journal)
-            axios.post(`/clients/${this.client.id}/journals`, journal);
-            this.showJournalForm = false;
+            if (journal.text) {
+                axios.post(`/clients/${this.client.id}/journals`, journal);
+                this.showJournalForm = false;
+
+                showToast('Success toast message', 'success');
+            }
         },
 
         deleteJournal(journal) {
