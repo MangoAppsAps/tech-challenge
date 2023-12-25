@@ -2020,13 +2020,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ToastComponent',
   props: {
-    toast: {
-      type: Object,
+    message: {
+      type: String,
       required: true
     },
-    closeToast: {
-      type: Function,
-      required: true
+    type: {
+      type: String,
+      "default": 'success' // Default to success type
+
     }
   },
   mounted: function mounted() {
@@ -2182,18 +2183,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _components_JournalForm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/JournalForm */ "./resources/js/components/JournalForm.vue");
-/* harmony import */ var _components_Toast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Toast */ "./resources/js/components/Toast.vue");
-/* harmony import */ var _composables_toast__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../composables/toast */ "./resources/js/composables/toast.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _components_JournalForm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/JournalForm */ "./resources/js/components/JournalForm.vue");
+/* harmony import */ var _components_Toast__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/Toast */ "./resources/js/components/Toast.vue");
+/* harmony import */ var _mixins_toast__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../mixins/toast */ "./resources/js/mixins/toast.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -2207,6 +2216,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2333,17 +2347,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientShow',
   props: ['client'],
+  mixins: [_mixins_toast__WEBPACK_IMPORTED_MODULE_5__["default"]],
   data: function data() {
     return {
       currentTab: 'bookings',
       bookings: [],
       journals: [],
-      showJournalForm: false,
-      toast: {
-        message: '',
-        type: 'success',
-        show: false
-      }
+      showJournalForm: false
     };
   },
   mounted: function mounted() {
@@ -2351,28 +2361,130 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     this.journals = _toConsumableArray(this.client.journals);
   },
   components: {
-    JournalForm: _components_JournalForm__WEBPACK_IMPORTED_MODULE_2__["default"],
-    Toast: _components_Toast__WEBPACK_IMPORTED_MODULE_3__["default"]
+    JournalForm: _components_JournalForm__WEBPACK_IMPORTED_MODULE_3__["default"],
+    Toast: _components_Toast__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   methods: {
     switchTab: function switchTab(newTab) {
       this.currentTab = newTab;
     },
     deleteBooking: function deleteBooking(booking) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                _context.next = 3;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/clients/".concat(_this.client.id, "/bookings/").concat(booking.id));
+
+              case 3:
+                _this.bookings = _this.bookings.filter(function (b) {
+                  return b.id !== booking.id;
+                });
+
+                _this.showToast('Booking deleted!', 'success');
+
+                _context.next = 10;
+                break;
+
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context["catch"](0);
+
+                _this.handleError(_context.t0);
+
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[0, 7]]);
+      }))();
     },
     createJournal: function createJournal(journal) {
-      if (journal.text) {
-        axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/clients/".concat(this.client.id, "/journals"), journal);
-        this.showJournalForm = false;
-        showToast('Success toast message', 'success');
-      }
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (!journal.text) {
+                  _context2.next = 13;
+                  break;
+                }
+
+                _context2.prev = 1;
+                _context2.next = 4;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/clients/".concat(_this2.client.id, "/journals"), journal);
+
+              case 4:
+                response = _context2.sent;
+                _this2.showJournalForm = false;
+
+                _this2.journals.unshift(response.data);
+
+                _this2.showToast('Journal entry created!', 'success');
+
+                _context2.next = 13;
+                break;
+
+              case 10:
+                _context2.prev = 10;
+                _context2.t0 = _context2["catch"](1);
+
+                _this2.handleError(_context2.t0);
+
+              case 13:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, null, [[1, 10]]);
+      }))();
     },
     deleteJournal: function deleteJournal(journal) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(this.client.id, "/journals/").concat(journal.id));
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.prev = 0;
+                _context3.next = 3;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/clients/".concat(_this3.client.id, "/journals/").concat(journal.id));
+
+              case 3:
+                _this3.journals = _this3.journals.filter(function (j) {
+                  return j.id !== journal.id;
+                });
+
+                _this3.showToast('Journal deleted!', 'success');
+
+                _context3.next = 10;
+                break;
+
+              case 7:
+                _context3.prev = 7;
+                _context3.t0 = _context3["catch"](0);
+
+                _this3.handleError(_context3.t0);
+
+              case 10:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, null, [[0, 7]]);
+      }))();
     },
     formatDate: function formatDate(date, format) {
-      return moment__WEBPACK_IMPORTED_MODULE_1___default()(date).format(format);
+      return moment__WEBPACK_IMPORTED_MODULE_2___default()(date).format(format);
     },
     filterBookings: function filterBookings(event) {
       var filter = event.target.value;
@@ -2381,19 +2493,25 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         this.bookings = _objectSpread({}, this.client.bookings);
       }
 
-      var now = moment__WEBPACK_IMPORTED_MODULE_1___default()();
+      var now = moment__WEBPACK_IMPORTED_MODULE_2___default()();
 
       if (filter === 'future') {
         this.bookings = this.client.bookings.filter(function (booking) {
-          return moment__WEBPACK_IMPORTED_MODULE_1___default()(booking.start) > now;
+          return moment__WEBPACK_IMPORTED_MODULE_2___default()(booking.start) > now;
         });
       }
 
       if (filter === 'past') {
         this.bookings = this.client.bookings.filter(function (booking) {
-          return moment__WEBPACK_IMPORTED_MODULE_1___default()(booking.start) < now;
+          return moment__WEBPACK_IMPORTED_MODULE_2___default()(booking.start) < now;
         });
       }
+    },
+    handleError: function handleError(error) {
+      var _error$response$data$, _error$response, _error$response$data;
+
+      var errorMessage = (_error$response$data$ = error === null || error === void 0 ? void 0 : (_error$response = error.response) === null || _error$response === void 0 ? void 0 : (_error$response$data = _error$response.data) === null || _error$response$data === void 0 ? void 0 : _error$response$data.message) !== null && _error$response$data$ !== void 0 ? _error$response$data$ : error.message;
+      this.showToast(errorMessage, 'error');
     }
   }
 });
@@ -2413,6 +2531,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _components_Toast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Toast */ "./resources/js/components/Toast.vue");
+/* harmony import */ var _mixins_toast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../mixins/toast */ "./resources/js/mixins/toast.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -2464,11 +2584,25 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientsList',
   props: {
     clients: Array
+  },
+  mixins: [_mixins_toast__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  components: {
+    Toast: _components_Toast__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
     return {
@@ -2488,7 +2622,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var _error$response, _error$response$data, errorMessage;
+        var _error$response$data$, _error$response, _error$response$data, message;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
@@ -2502,26 +2636,25 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 _this.clientsList = _this.clientsList.filter(function (c) {
                   return c.id !== client.id;
                 });
-                _context.next = 9;
+
+                _this.showToast('Client deleted!', 'success');
+
+                _context.next = 11;
                 break;
 
-              case 6:
-                _context.prev = 6;
+              case 7:
+                _context.prev = 7;
                 _context.t0 = _context["catch"](0);
+                message = (_error$response$data$ = _context.t0 === null || _context.t0 === void 0 ? void 0 : (_error$response = _context.t0.response) === null || _error$response === void 0 ? void 0 : (_error$response$data = _error$response.data) === null || _error$response$data === void 0 ? void 0 : _error$response$data.error) !== null && _error$response$data$ !== void 0 ? _error$response$data$ : _context.t0.message;
 
-                if (_context.t0 !== null && _context.t0 !== void 0 && (_error$response = _context.t0.response) !== null && _error$response !== void 0 && (_error$response$data = _error$response.data) !== null && _error$response$data !== void 0 && _error$response$data.error) {
-                  errorMessage = _context.t0.response.data.error;
-                  console.log(errorMessage);
-                } else {
-                  console.log(_context.t0.message);
-                }
+                _this.showToast(message, 'error');
 
-              case 9:
+              case 11:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 6]]);
+        }, _callee, null, [[0, 7]]);
       }))();
     }
   }
@@ -61439,40 +61572,34 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm.toast.show
-      ? _c(
-          "div",
-          {
-            staticClass: "toast show border",
-            class: [
-              _vm.toast.type === "success" ? "border-success" : "border-danger"
-            ]
-          },
-          [
-            _c("div", { staticClass: "toast-header" }, [
-              _c("strong", { staticClass: "mr-auto text-primary" }, [
-                _vm._v("Notification")
-              ]),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "ml-2 mb-1 close",
-                  attrs: { type: "button", "data-dismiss": "toast" },
-                  on: { click: _vm.closeToast }
-                },
-                [_vm._v("×")]
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "toast-body" }, [
-              _vm._v(
-                "\n            " + _vm._s(_vm.toast.message) + "\n        "
-              )
-            ])
-          ]
-        )
-      : _vm._e()
+    _c(
+      "div",
+      {
+        staticClass: "toast show border",
+        class: [_vm.type === "success" ? "border-success" : "border-danger"]
+      },
+      [
+        _c("div", { staticClass: "toast-header" }, [
+          _c("strong", { staticClass: "mr-auto text-primary" }, [
+            _vm._v("Notification")
+          ]),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "ml-2 mb-1 close",
+              attrs: { type: "button", "data-dismiss": "toast" },
+              on: { click: _vm.closeToast }
+            },
+            [_vm._v("×")]
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "toast-body" }, [
+          _vm._v("\n            " + _vm._s(_vm.message) + "\n        ")
+        ])
+      ]
+    )
   ])
 }
 var staticRenderFns = []
@@ -61969,7 +62096,12 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _c("Toast", { attrs: { toast: _vm.toast, closeToast: _vm.closeToast } })
+      _vm.toast.show
+        ? _c("Toast", {
+            attrs: { message: _vm.toast.message, type: _vm.toast.type },
+            on: { closeToast: _vm.closeToast }
+          })
+        : _vm._e()
     ],
     1
   )
@@ -62025,53 +62157,64 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _vm._m(0),
-    _vm._v(" "),
-    _c("table", { staticClass: "table" }, [
-      _vm._m(1),
+  return _c(
+    "div",
+    [
+      _vm._m(0),
       _vm._v(" "),
-      _c(
-        "tbody",
-        _vm._l(_vm.clientsList, function(client) {
-          return _c("tr", { key: client.id }, [
-            _c("td", [_vm._v(_vm._s(client.name))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(client.email))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(client.phone))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(client.bookings_count))]),
-            _vm._v(" "),
-            _c("td", [
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-primary btn-sm",
-                  attrs: { href: "/clients/" + client.id }
-                },
-                [_vm._v("View")]
-              ),
+      _c("table", { staticClass: "table" }, [
+        _vm._m(1),
+        _vm._v(" "),
+        _c(
+          "tbody",
+          _vm._l(_vm.clientsList, function(client) {
+            return _c("tr", { key: client.id }, [
+              _c("td", [_vm._v(_vm._s(client.name))]),
               _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-danger btn-sm",
-                  on: {
-                    click: function($event) {
-                      return _vm.deleteClient(client)
+              _c("td", [_vm._v(_vm._s(client.email))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(client.phone))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(client.bookings_count))]),
+              _vm._v(" "),
+              _c("td", [
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-primary btn-sm",
+                    attrs: { href: "/clients/" + client.id }
+                  },
+                  [_vm._v("View")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger btn-sm",
+                    on: {
+                      click: function($event) {
+                        return _vm.deleteClient(client)
+                      }
                     }
-                  }
-                },
-                [_vm._v("Delete")]
-              )
+                  },
+                  [_vm._v("Delete")]
+                )
+              ])
             ])
-          ])
-        }),
-        0
-      )
-    ])
-  ])
+          }),
+          0
+        )
+      ]),
+      _vm._v(" "),
+      _vm.toast.show
+        ? _c("Toast", {
+            attrs: { message: _vm.toast.message, type: _vm.toast.type },
+            on: { closeToast: _vm.closeToast }
+          })
+        : _vm._e()
+    ],
+    1
+  )
 }
 var staticRenderFns = [
   function() {
@@ -74637,48 +74780,37 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/composables/toast.js":
-/*!*******************************************!*\
-  !*** ./resources/js/composables/toast.js ***!
-  \*******************************************/
+/***/ "./resources/js/mixins/toast.js":
+/*!**************************************!*\
+  !*** ./resources/js/mixins/toast.js ***!
+  \**************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return useToast; });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
-
-function useToast() {
-  var toast = Object(vue__WEBPACK_IMPORTED_MODULE_0__["ref"])({
-    show: false,
-    message: '',
-    type: 'success'
-  });
-
-  function showToast(message) {
-    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'success';
-    toast.value.message = message;
-    toast.value.type = type;
-    toast.value.show = true;
-    setTimeout(function () {
-      closeToast();
-    }, 5000);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  methods: {
+    showToast: function showToast(message) {
+      var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'success';
+      this.toast.message = message;
+      this.toast.type = type;
+      this.toast.show = true;
+    },
+    closeToast: function closeToast() {
+      this.toast.show = false;
+    }
+  },
+  data: function data() {
+    return {
+      toast: {
+        message: '',
+        type: 'success',
+        show: false
+      }
+    };
   }
-
-  function closeToast() {
-    toast.value.show = false;
-    toast.value.message = '';
-    toast.value.type = 'success'; // Reset type to default
-  }
-
-  return {
-    toast: toast,
-    showToast: showToast,
-    closeToast: closeToast
-  };
-}
+});
 
 /***/ }),
 

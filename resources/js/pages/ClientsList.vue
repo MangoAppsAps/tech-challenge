@@ -28,17 +28,33 @@
                 </tr>
             </tbody>
         </table>
+
+        <Toast
+            v-if="toast.show"
+            :message="toast.message"
+            :type="toast.type"
+            @closeToast="closeToast"
+        />
+
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import Toast from "../components/Toast";
+import toast from "../mixins/toast";
 
 export default {
     name: 'ClientsList',
 
     props: {
         clients: Array
+    },
+
+    mixins: [toast],
+
+    components: {
+        Toast,
     },
 
     data() {
@@ -62,13 +78,12 @@ export default {
                 await axios.delete(`/clients/${client.id}`);
 
                 this.clientsList = this.clientsList.filter(c => c.id !== client.id);
+
+                this.showToast('Client deleted!', 'success');
             } catch(error) {
-                if (error?.response?.data?.error) {
-                    const errorMessage = error.response.data.error;
-                    console.log(errorMessage);
-                } else {
-                    console.log(error.message);
-                }
+                const message = error?.response?.data?.error ?? error.message;
+
+                this.showToast(message, 'error');
             }
         }
     }

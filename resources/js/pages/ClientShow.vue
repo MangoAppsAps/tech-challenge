@@ -112,7 +112,12 @@
                 </div>
             </div>
         </div>
-        <Toast :toast="toast" :closeToast="closeToast"/>
+        <Toast
+            v-if="toast.show"
+            :message="toast.message"
+            :type="toast.type"
+            @closeToast="closeToast"
+        />
     </div>
 </template>
 
@@ -121,12 +126,14 @@ import axios from 'axios';
 import moment from "moment";
 import JournalForm from "../components/JournalForm";
 import Toast from "../components/Toast";
-import useToast from '../composables/toast';
+import toast from "../mixins/toast";
 
 export default {
     name: 'ClientShow',
 
     props: ['client'],
+
+    mixins: [toast],
 
     data() {
         return {
@@ -134,11 +141,6 @@ export default {
             bookings: [],
             journals: [],
             showJournalForm: false,
-            toast: {
-                message: '',
-                type: 'success',
-                show: false
-            }
         }
     },
 
@@ -157,21 +159,42 @@ export default {
             this.currentTab = newTab;
         },
 
-        deleteBooking(booking) {
-            axios.delete(`/bookings/${booking.id}`);
-        },
+        async deleteBooking(booking) {
+            try {
+                await axios.delete(`/clients/${this.client.id}/bookings/${booking.id}`);
 
-        createJournal(journal) {
-            if (journal.text) {
-                axios.post(`/clients/${this.client.id}/journals`, journal);
-                this.showJournalForm = false;
+                this.bookings = this.bookings.filter(b => b.id !== booking.id);
 
-                showToast('Success toast message', 'success');
+                this.showToast('Booking deleted!', 'success');
+            } catch (error) {
+                this.handleError(error);
             }
         },
 
-        deleteJournal(journal) {
-            axios.delete(`/clients/${this.client.id}/journals/${journal.id}`);
+        async createJournal(journal) {
+            if (journal.text) {
+                try {
+                    const response = await axios.post(`/clients/${this.client.id}/journals`, journal);
+                    this.showJournalForm = false;
+
+                    this.journals.unshift(response.data);
+
+                    this.showToast('Journal entry created!', 'success');
+                } catch (error) {
+                    this.handleError(error);
+                }
+            }
+        },
+
+        async deleteJournal(journal) {
+            try {
+                await axios.delete(`/clients/${this.client.id}/journals/${journal.id}`);
+                this.journals = this.journals.filter(j => j.id !== journal.id);
+
+                this.showToast('Journal deleted!', 'success');
+            } catch (error) {
+                this.handleError(error);
+            }
         },
 
         formatDate(date, format) {
@@ -191,7 +214,13 @@ export default {
             if (filter === 'past') {
                 this.bookings = this.client.bookings.filter(booking => moment(booking.start) < now);
             }
-        }
+        },
+
+        handleError(error) {
+            const errorMessage = error?.response?.data?.message ?? error.message;
+
+            this.showToast(errorMessage, 'error');
+        },
     }
 }
 </script>
