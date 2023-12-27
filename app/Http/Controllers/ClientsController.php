@@ -3,18 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Client;
-use Illuminate\Http\Request;
+use App\Http\Requests\CreateClientRequest;
+use App\Services\ClientsService;
 
 class ClientsController extends Controller
 {
+    protected $clientsService;
+
+    public function __construct(ClientsService $clientsService)
+    {
+        $this->clientsService = $clientsService;
+    }
+
     public function index()
     {
-        $clients = Client::all();
-
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
-
+        $clients = $this->clientsService->getClientsForUser();
         return view('clients.index', ['clients' => $clients]);
     }
 
@@ -23,31 +26,20 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::where('id', $client)->first();
-
+        $client = $this->clientsService->getClientDetails($client);
         return view('clients.show', ['client' => $client]);
     }
 
-    public function store(Request $request)
+    public function store(CreateClientRequest $request)
     {
-        $client = new Client;
-        $client->name = $request->get('name');
-        $client->email = $request->get('email');
-        $client->phone = $request->get('phone');
-        $client->adress = $request->get('adress');
-        $client->city = $request->get('city');
-        $client->postcode = $request->get('postcode');
-        $client->save();
-
-        return $client;
+        $validatedData = $request->validated();
+        return $this->clientsService->createClient($validatedData);
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
-
-        return 'Deleted';
+        return $this->clientsService->deleteClient($client);
     }
 }

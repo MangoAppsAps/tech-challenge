@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr v-for="client in clientsList" :key="client.id">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
@@ -28,20 +28,63 @@
                 </tr>
             </tbody>
         </table>
+
+        <Toast
+            v-if="toast.show"
+            :message="toast.message"
+            :type="toast.type"
+            @closeToast="closeToast"
+        />
+
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import Toast from "../components/Toast";
+import toast from "../mixins/toast";
 
 export default {
     name: 'ClientsList',
 
-    props: ['clients'],
+    props: {
+        clients: Array
+    },
+
+    mixins: [toast],
+
+    components: {
+        Toast,
+    },
+
+    data() {
+        return {
+            toast: {
+                show: false,
+                success: true,
+                message: ''
+            },
+            clientsList: []
+        };
+    },
+
+    mounted() {
+        this.clientsList = [ ...this.clients ];
+    },
 
     methods: {
-        deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+        async deleteClient(client) {
+            try {
+                await axios.delete(`/clients/${client.id}`);
+
+                this.clientsList = this.clientsList.filter(c => c.id !== client.id);
+
+                this.showToast('Client deleted!', 'success');
+            } catch(error) {
+                const message = error?.response?.data?.error ?? error.message;
+
+                this.showToast(message, 'error');
+            }
         }
     }
 }
